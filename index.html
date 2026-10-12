@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="glass">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Alka News - Premium Dashboard & Realtime CMS</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Cropper.js for Image Cropping -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', '-apple-system', 'sans-serif'] },
+                    colors: {
+                        brand: { blue: '#0878F9', navy: '#12325B', orange: '#FF7A1A' },
+                        text: { primary: '#15345D', secondary: '#7486A0' },
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* === ULTRA GLASSMORPHISM SYSTEM === */
+        :root[data-theme="glass"] {
+            --bg-body: 
+                radial-gradient(circle at 10% 20%, rgba(255, 235, 225, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(215, 236, 255, 0.9) 0%, transparent 60%),
+                radial-gradient(circle at 50% 50%, rgba(245, 240, 255, 0.7) 0%, transparent 70%),
+                radial-gradient(circle at 80% 20%, rgba(255, 245, 220, 0.8) 0%, transparent 50%),
+                #EAF2F8;
+            
+            --surface: rgba(255, 255, 255, 0.35);
+            --surface-strong: rgba(255, 255, 255, 0.55);
+            --surface-hover: rgba(255, 255, 255, 0.65);
+            
+            --border: rgba(255, 255, 255, 0.7);
+            --border-highlight: rgba(255, 255, 255, 0.9);
+            
+            --shadow: 0 10px 40px -10px rgba(31, 38, 135, 0.08), 
+                      inset 0 1px 1px rgba(255, 255, 255, 0.9), 
+                      inset 0 -1px 1px rgba(255, 255, 255, 0.2);
+                      
+            --blur: blur(30px) saturate(180%);
+        }
+
+        html, body {
+            width: 100%; max-width: 100%; min-height: 100%;
+            background: var(--bg-body); background-attachment: fixed;
+            color: var(--text-primary);
+            -webkit-tap-highlight-color: transparent; overflow-x: hidden;
+            font-size: 13px; line-height: 1.4;
+        }
+        
+        * { box-sizing: border-box; }
+        img { max-width: 100%; }
+
+        /* Premium Glass Classes */
+        .glass { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+        .glass-strong { background: var(--surface-strong); border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); }
+        .glass-card { background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur); border-radius: 20px; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .glass-card:hover { background: var(--surface-hover); transform: translateY(-2px); box-shadow: 0 15px 45px -10px rgba(31, 38, 135, 0.12), inset 0 1px 1px rgba(255, 255, 255, 1); }
+        .glass-input { background: rgba(255,255,255,.8); border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,.9); border-radius: 14px; }
+
+        .px-base { padding-left: 16px; padding-right: 16px; }
+        .pt-safe { padding-top: calc(20px + env(safe-area-inset-top)); }
+        .pb-nav { padding-bottom: calc(86px + env(safe-area-inset-bottom)); }
+
+        /* Dynamic Nav States */
+        .desk-nav.active { background: rgba(255, 255, 255, 0.9) !important; color: #0878F9 !important; font-weight: 800 !important; box-shadow: 0 8px 24px rgba(8, 120, 249, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1); border: 1px solid rgba(255, 255, 255, 1); transform: scale(1.02); }
+        .desk-nav.active svg { stroke: #0878F9 !important; stroke-width: 2.5px; }
+
+        .mob-nav-btn.active { color: #0878F9 !important; }
+        .mob-nav-btn.active .nav-icon { stroke: #0878F9 !important; stroke-width: 2.5px; transform: translateY(-2px); transition: transform 0.2s; }
+        .mob-nav-btn.active span { color: #0878F9 !important; font-weight: 800; }
+        .mob-nav-btn.active::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background-color: #0878F9; box-shadow: 0 0 8px rgba(8, 120, 249, 0.5); }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .page { display: none; animation: fadeUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .page.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .bottom-sheet { transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .bottom-sheet.open { transform: translateY(0); }
+        .overlay { opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .overlay.open { opacity: 1; pointer-events: auto; }
+        
+        /* Thematic Masonry & Grids */
+        .masonry-grid { column-count: 1; column-gap: 16px; }
+        @media (min-width: 768px) { .masonry-grid { column-count: 2; } }
+        @media (min-width: 1024px) { .masonry-grid { column-count: 3; } }
+        .masonry-item { break-inside: avoid; margin-bottom: 16px; }
+        
+        /* Book Cover 3D Effect */
+        .book-cover { perspective: 1000px; transform-style: preserve-3d; }
+        .book-cover img { transform: rotateY(-15deg); box-shadow: -5px 10px 20px rgba(0,0,0,0.2), inset 4px 0 10px rgba(255,255,255,0.4); transition: transform 0.4s ease; border-radius: 4px 12px 12px 4px; border-left: 4px solid rgba(255,255,255,0.8); }
+        .glass-card:hover .book-cover img { transform: rotateY(0deg) scale(1.05); box-shadow: 0 15px 30px rgba(0,0,0,0.15); }
+
+        /* Admin Layout Flex Utilities */
+        .admin-form-area textarea { transition: border-color 0.2s; }
+        .admin-form-area textarea:focus { border-color: rgba(8, 120, 249, 0.5); }
+
+        /* Rich Text Editor Classes */
+        [contenteditable=true]:empty:before { content: attr(placeholder); color: #7486A0; pointer-events: none; display: block; }
+        #adm-news-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; border: 1px solid rgba(255,255,255,0.5); cursor: pointer; transition: box-shadow 0.2s; }
+        #adm-news-content img:hover { box-shadow: 0 0 0 3px rgba(8, 120, 249, 0.5); }
+        #adm-news-content ul { list-style-type: disc; padding-left: 20px; margin: 10px 0; }
+        #adm-news-content a { color: #0878F9; text-decoration: underline; font-weight: bold; }
+    </style>
+    
+    <script src="https://unpkg.com/lucide@latest" crossorigin="anonymous"></script>
+</head>
+<body class="antialiased selection:bg-brand-blue selection:text-white relative">
+
+    <!-- Global Toast Notification -->
+    <div id="toast-notif" class="fixed top-[-100px] left-1/2 transform -translate-x-1/2 z-[100] glass-card px-6 py-3.5 border border-white shadow-2xl transition-all duration-500 flex items-center gap-3.5 w-max max-w-[90%] bg-white/95 backdrop-blur-xl">
+        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600 shrink-0 border border-green-200"><i data-lucide="check" class="w-4 h-4"></i></div>
+        <span id="toast-msg" class="font-black text-[13px] text-brand-navy">Berhasil disimpan!</span>
+    </div>
+
+    <!-- Image Cropper Modal -->
+    <div id="image-crop-modal" class="fixed inset-0 z-[120] bg-brand-navy/60 backdrop-blur-sm hidden flex-col items-center justify-center p-4 opacity-0 transition-opacity">
+        <div class="glass-strong p-6 rounded-[24px] w-full max-w-3xl shadow-2xl border border-white/80" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-black text-[18px] text-brand-navy flex items-center gap-2"><i data-lucide="crop" class="w-5 h-5 text-brand-blue"></i> Edit & Crop Gambar</h3>
+                <button class="w-8 h-8 rounded-full glass border border-white flex items-center justify-center text-text-secondary hover:bg-white transition-colors" onclick="closeCropModal()"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            
+            <div class="w-full h-[300px] md:h-[400px] bg-white/40 border border-white/50 rounded-[14px] overflow-hidden relative mb-4">
+                <img id="crop-image-target" src="" class="max-w-full max-h-full block">
+            </div>
+            
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <button onclick="setCropRatio(16/9)" class="px-3 py-1.5 glass rounded-[8px] text-[11px] font-bold text-brand-navy hover:bg-white shadow-sm border border-white">16:9</button>
+                    <button onclick="setCropRatio(4/3)" class="px-3 py-1.5 glass rounded-[8px] text-[11px] font-bold text-brand-navy hover:bg-white shadow-sm border border-white">4:3</button>
+                    <button onclick="setCropRatio(1)" class="px-3 py-1.5 glass rounded-[8px] text-[11px] font-bold text-brand-navy hover:bg-white shadow-sm border border-white">1:1</button>
+                    <button onclick="setCropRatio(NaN)" class="px-3 py-1.5 glass rounded-[8px] text-[11px] font-bold text-brand-blue bg-blue-50/50 hover:bg-blue-100 shadow-sm border border-blue-100">Bebas</button>
+                </div>
+                
+                <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+                    <div class="flex items-center gap-2 glass px-3 py-1.5 rounded-[10px] border border-white shadow-sm">
+                        <label class="text-[11px] font-extrabold text-brand-navy">Lebar (px):</label>
+                        <input type="number" id="resize-width-input" class="w-[70px] bg-transparent outline-none text-[12px] font-bold text-center border-b border-gray-300 focus:border-brand-blue" placeholder="Auto">
+                    </div>
+                    <button onclick="applyCropAndResize()" class="bg-gradient-to-r from-brand-blue to-blue-600 text-white px-6 py-2.5 rounded-[10px] font-bold text-[12px] shadow-md flex items-center gap-1.5 hover:scale-105 transition-transform">
+                        <i data-lucide="check" class="w-4 h-4"></i> Terapkan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- DESKTOP SIDEBAR -->
+    <!-- ============================================================== -->
+    <aside class="hidden md:flex fixed left-0 top-0 h-screen w-[260px] glass-strong border-y-0 border-l-0 flex-col z-[70] shadow-sm">
+        <div class="h-[90px] flex items-center px-8 cursor-pointer" onclick="navigate('#/')">
+            <h1 class="font-black text-[28px] text-brand-navy tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-brand-navy to-brand-blue drop-shadow-sm">Alka News</h1>
+        </div>
+        <div class="flex-1 px-5 py-4 flex flex-col overflow-y-auto no-scrollbar relative">
+            <div class="space-y-2 flex-1">
+                <a href="#/berita" class="desk-nav flex items-center px-4 py-3.5 rounded-[16px] font-bold text-[14px] text-text-secondary hover:bg-white/40 transition-colors" data-target="#/berita">
+                    <i data-lucide="layout-template" class="w-[20px] h-[20px] mr-3.5"></i> Berita Utama
+                </a>
+                <a href="#/agenda" class="desk-nav flex items-center px-4 py-3.5 rounded-[16px] font-bold text-[14px] text-text-secondary hover:bg-white/40 transition-colors" data-target="#/agenda">
+                    <i data-lucide="calendar-days" class="w-[20px] h-[20px] mr-3.5"></i> Kalender Agenda
+                </a>
+                <a href="#/prestasi" class="desk-nav flex items-center px-4 py-3.5 rounded-[16px] font-bold text-[14px] text-text-secondary hover:bg-white/40 transition-colors" data-target="#/prestasi">
+                    <i data-lucide="award" class="w-[20px] h-[20px] mr-3.5"></i> Hall of Fame
+                </a>
+                <div class="my-4 pt-4 border-t border-white/80">
+                    <p class="px-4 text-[10px] font-black text-brand-blue uppercase tracking-[0.2em] mb-3 opacity-90">Publikasi Ekstra</p>
+                </div>
+                <a href="#/buletin" class="desk-nav flex items-center px-4 py-3.5 rounded-[16px] font-bold text-[14px] text-text-secondary hover:bg-white/40 transition-colors" data-target="#/buletin">
+                    <i data-lucide="pin" class="w-[20px] h-[20px] mr-3.5"></i> Papan Edaran
+                </a>
+                <a href="#/artikel" class="desk-nav flex items-center px-4 py-3.5 rounded-[16px] font-bold text-[14px] text-text-secondary hover:bg-white/40 transition-colors" data-target="#/artikel">
+                    <i data-lucide="feather" class="w-[20px] h-[20px] mr-3.5"></i> Karya Siswa
+                </a>
+                <a href="#/emagazine" class="desk-nav flex items-center px-4 py-3.5 rounded-[16px] font-bold text-[14px] text-text-secondary hover:bg-white/40 transition-colors" data-target="#/emagazine">
+                    <i data-lucide="book-open" class="w-[20px] h-[20px] mr-3.5"></i> E-Magazine
+                </a>
+            </div>
+
+            <div class="mt-4 pt-4 admin-access-element hidden border-t border-white/80">
+                <a href="#/admin" class="desk-nav flex items-center px-4 py-4 rounded-[16px] font-bold text-[14px] text-red-500 hover:bg-red-500/10 hover:text-red-600 transition-colors" data-target="#/admin">
+                    <i data-lucide="shield-alert" class="w-[20px] h-[20px] mr-3.5"></i> Portal Admin CMS
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ============================================================== -->
+    <!-- MAIN CONTENT AREA -->
+    <!-- ============================================================== -->
+    <main class="w-full md:pl-[260px] flex flex-col relative transition-all duration-300 min-h-screen">
+        <div class="w-full max-w-[1400px] mx-auto flex flex-col gap-6 md:pt-[30px] pt-[20px] md:px-[40px] md:pb-[40px]">
+
+            <!-- ========================================== -->
+            <!-- 1. PAGE: BERANDA (DYNAMIC DASHBOARD) -->
+            <!-- ========================================== -->
+            <div id="page-home" class="page active">
+                <div class="md:hidden flex flex-col pb-nav px-base gap-4 pt-[5px]">
+                    <div class="flex items-center justify-between mb-2 mt-1">
+                        <h1 class="font-black text-[26px] text-brand-navy tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-navy to-brand-blue">Alka News</h1>
+                        <div class="w-10 h-10 rounded-full glass flex items-center justify-center text-brand-blue shadow-sm"><i data-lucide="sparkles" class="w-5 h-5"></i></div>
+                    </div>
+
+                    <div id="mob-bento-hero" class="relative w-full h-[220px] rounded-[24px] overflow-hidden glass border border-white/80 shadow-md cursor-pointer group" onclick="navigate('#/berita/detail')"></div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="glass-card p-4 flex flex-col justify-between h-[160px] bg-gradient-to-br from-yellow-50/50 to-orange-50/50 cursor-pointer" onclick="navigate('#/prestasi')">
+                            <div class="w-10 h-10 rounded-full bg-yellow-400/20 text-yellow-600 flex items-center justify-center backdrop-blur-sm border border-yellow-200/50 mb-2 shadow-sm"><i data-lucide="award" class="w-5 h-5"></i></div>
+                            <div>
+                                <span class="text-[9px] font-black text-yellow-600 uppercase tracking-wider mb-1 block">Highlight</span>
+                                <h3 class="font-extrabold text-[13px] text-brand-navy leading-tight line-clamp-3">Medali Emas Olimpiade Sains Nasional 2026</h3>
+                            </div>
+                        </div>
+                        <div class="glass-card p-4 flex flex-col justify-between h-[160px] bg-gradient-to-bl from-blue-50/50 to-indigo-50/50 cursor-pointer" onclick="navigate('#/emagazine')">
+                            <div class="w-10 h-10 rounded-full bg-blue-400/20 text-blue-600 flex items-center justify-center backdrop-blur-sm border border-blue-200/50 mb-2 shadow-sm"><i data-lucide="book-open" class="w-5 h-5"></i></div>
+                            <div>
+                                <span class="text-[9px] font-black text-blue-600 uppercase tracking-wider mb-1 block">Rilis Baru</span>
+                                <h3 class="font-extrabold text-[13px] text-brand-navy leading-tight line-clamp-2">E-Magazine Edisi Agustus 2026</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-5 flex flex-col gap-4 border border-white">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2"><i data-lucide="calendar-days" class="w-5 h-5 text-brand-orange"></i><h3 class="font-extrabold text-[16px] text-brand-navy">Agenda Terdekat</h3></div>
+                            <button class="w-7 h-7 rounded-full bg-white/50 flex items-center justify-center text-text-secondary" onclick="navigate('#/agenda')"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                        </div>
+                        <div id="mob-bento-agenda" class="flex flex-col gap-3"></div>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex flex-col gap-6 w-full">
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <h1 class="font-black text-[32px] text-brand-navy tracking-tighter leading-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-navy to-brand-blue">Dashboard Insight</h1>
+                            <p class="text-[14px] text-text-secondary font-medium">Ringkasan aktivitas dan informasi terkini secara real-time.</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[20px] font-black text-brand-navy" id="live-time">10:45 AM</p>
+                            <p class="text-[12px] text-text-secondary font-medium" id="live-date">Sabtu, 10 Oktober 2026</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-12 grid-rows-[240px_auto] gap-6 items-stretch">
+                        <div id="desk-bento-hero" class="col-span-8 row-span-1 glass-card border border-white/80 shadow-md relative overflow-hidden group cursor-pointer" onclick="navigate('#/berita/detail')"></div>
+
+                        <div class="col-span-4 row-span-1 glass-card p-6 border border-white/80 shadow-sm flex flex-col justify-between relative overflow-hidden cursor-pointer hover:shadow-lg transition-shadow bg-gradient-to-br from-yellow-50/60 to-white/30" onclick="navigate('#/prestasi')">
+                            <div class="absolute right-[-20px] bottom-[-20px] w-40 h-40 bg-yellow-400/20 rounded-full blur-2xl"></div>
+                            <div class="flex justify-between items-start relative z-10">
+                                <div class="w-12 h-12 rounded-[14px] bg-yellow-400/20 text-yellow-600 flex items-center justify-center backdrop-blur-md border border-yellow-200/50 shadow-sm"><i data-lucide="award" class="w-6 h-6"></i></div>
+                                <span class="bg-white/80 text-yellow-600 font-bold text-[10px] px-3 py-1 rounded-full shadow-sm border border-yellow-100">Hall of Fame</span>
+                            </div>
+                            <div class="relative z-10 mt-4">
+                                <h3 class="font-black text-[20px] text-brand-navy leading-tight mb-2" id="desk-bento-prestasi-title">Memuat...</h3>
+                                <p class="text-[12px] text-text-secondary font-medium" id="desk-bento-prestasi-date">...</p>
+                            </div>
+                        </div>
+
+                        <div class="col-span-4 row-span-1 glass-card p-6 border border-white/80 shadow-sm flex flex-col h-full bg-white/40">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="flex items-center gap-2"><i data-lucide="calendar-days" class="w-5 h-5 text-brand-orange"></i><h3 class="font-extrabold text-[18px] text-brand-navy">Agenda Terdekat</h3></div>
+                                <button class="text-[12px] font-bold text-brand-blue bg-white/60 px-3 py-1.5 rounded-[10px] shadow-sm hover:bg-white" onclick="navigate('#/agenda')">Semua</button>
+                            </div>
+                            <div id="desk-bento-agenda" class="flex flex-col gap-4 flex-grow"></div>
+                        </div>
+
+                        <div class="col-span-4 row-span-1 glass-card p-6 border border-white/80 shadow-sm flex flex-col h-full bg-gradient-to-br from-red-50/30 to-orange-50/30">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="flex items-center gap-2"><i data-lucide="pin" class="w-5 h-5 text-red-500"></i><h3 class="font-extrabold text-[18px] text-brand-navy">Papan Edaran</h3></div>
+                                <button class="text-[12px] font-bold text-brand-blue bg-white/60 px-3 py-1.5 rounded-[10px] shadow-sm hover:bg-white" onclick="navigate('#/buletin')">Semua</button>
+                            </div>
+                            <div id="desk-bento-buletin" class="flex flex-col gap-4 flex-grow"></div>
+                        </div>
+
+                        <div class="col-span-4 row-span-1 glass-card p-6 border border-white/80 shadow-sm flex flex-col h-full bg-gradient-to-br from-purple-50/30 to-pink-50/30">
+                            <div class="flex justify-between items-center mb-6">
+                                <div class="flex items-center gap-2"><i data-lucide="feather" class="w-5 h-5 text-purple-500"></i><h3 class="font-extrabold text-[18px] text-brand-navy">Karya Siswa</h3></div>
+                                <button class="text-[12px] font-bold text-brand-blue bg-white/60 px-3 py-1.5 rounded-[10px] shadow-sm hover:bg-white" onclick="navigate('#/artikel')">Semua</button>
+                            </div>
+                            <div id="desk-bento-karya" class="flex flex-col gap-4 flex-grow relative"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 2. PAGE: BERITA (MAGAZINE & BENTO) -->
+            <!-- ========================================== -->
+            <div id="page-berita" class="page">
+                <div class="md:hidden flex flex-col mb-4 mt-[5px] px-base">
+                    <h1 class="text-[26px] font-black text-brand-navy leading-tight mb-0.5 tracking-tight">Berita Utama</h1>
+                    <p class="text-[11px] text-text-secondary leading-snug">Jelajahi ragam informasi dan cerita inspiratif sekolah.</p>
+                </div>
+
+                <div class="hidden md:flex flex-col mb-8 mt-2 px-base md:px-0">
+                    <h1 class="text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter">Berita Utama</h1>
+                    <p class="text-[14px] text-text-secondary">Pusat informasi terlengkap dengan tata letak majalah digital interaktif.</p>
+                </div>
+
+                <style>
+                    .news-filter-btn.active-semua { background: rgba(255,255,255,0.9); color: #0878F9; box-shadow: 0 4px 15px rgba(8,120,249,0.2), inset 0 1px 1px white; border: 1px solid white; transform: scale(1.05); }
+                    .news-filter-btn.active-kegiatan { background: rgba(255,255,255,0.9); color: #FF7A1A; box-shadow: 0 4px 15px rgba(255,122,26,0.2), inset 0 1px 1px white; border: 1px solid white; transform: scale(1.05); }
+                    .news-filter-btn.active-akademik { background: rgba(255,255,255,0.9); color: #10B981; box-shadow: 0 4px 15px rgba(16,185,129,0.2), inset 0 1px 1px white; border: 1px solid white; transform: scale(1.05); }
+                    .news-filter-btn.active-prestasi { background: rgba(255,255,255,0.9); color: #8B5CF6; box-shadow: 0 4px 15px rgba(139,92,246,0.2), inset 0 1px 1px white; border: 1px solid white; transform: scale(1.05); }
+                    .news-filter-btn.active-pengumuman { background: rgba(255,255,255,0.9); color: #EF4444; box-shadow: 0 4px 15px rgba(239,68,68,0.2), inset 0 1px 1px white; border: 1px solid white; transform: scale(1.05); }
+                </style>
+
+                <div class="flex overflow-x-auto no-scrollbar gap-3 mb-8 pb-2 px-base md:px-0" id="news-category-filters">
+                    <button onclick="filterNews('Semua', this)" data-active="active-semua" class="news-filter-btn active-semua px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap bg-white/40 text-text-secondary border border-white/60 backdrop-blur-md">Semua Liputan</button>
+                    <button onclick="filterNews('Kegiatan', this)" data-active="active-kegiatan" class="news-filter-btn px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap bg-white/40 text-text-secondary border border-white/60 backdrop-blur-md flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> Kegiatan</button>
+                    <button onclick="filterNews('Akademik', this)" data-active="active-akademik" class="news-filter-btn px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap bg-white/40 text-text-secondary border border-white/60 backdrop-blur-md flex items-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> Akademik</button>
+                    <button onclick="filterNews('Prestasi', this)" data-active="active-prestasi" class="news-filter-btn px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap bg-white/40 text-text-secondary border border-white/60 backdrop-blur-md flex items-center gap-2"><i data-lucide="award" class="w-4 h-4"></i> Prestasi</button>
+                    <button onclick="filterNews('Pengumuman', this)" data-active="active-pengumuman" class="news-filter-btn px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap bg-white/40 text-text-secondary border border-white/60 backdrop-blur-md flex items-center gap-2"><i data-lucide="megaphone" class="w-4 h-4"></i> Pengumuman</button>
+                </div>
+
+                <div id="news-list-container" class="w-full pb-12 px-base md:px-0"></div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 3. PAGE: BULETIN (NOTICE BOARD) -->
+            <!-- ========================================== -->
+            <div id="page-buletin" class="page">
+                <div class="px-base md:px-0 mt-[5px] md:mt-4 flex flex-col gap-6 pb-8">
+                    <div>
+                        <h1 class="text-[26px] md:text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter">Papan Edaran</h1>
+                        <p class="text-[11px] md:text-[14px] text-text-secondary">Informasi resmi, pengumuman, dan surat edaran sekolah.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="buletin-board-container"></div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 4. PAGE: ARTIKEL (KARYA SISWA) -->
+            <!-- ========================================== -->
+            <div id="page-artikel" class="page">
+                <div class="px-base md:px-0 mt-[5px] md:mt-4 flex flex-col gap-6 pb-8">
+                    <div>
+                        <h1 class="text-[26px] md:text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter">Karya Siswa</h1>
+                        <p class="text-[11px] md:text-[14px] text-text-secondary">Pusat apresiasi literasi, opini, cerpen, dan puisi warga sekolah.</p>
+                    </div>
+
+                    <div class="masonry-grid" id="artikel-masonry-container"></div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 5. PAGE: E-MAGAZINE (BOOKSHELF) -->
+            <!-- ========================================== -->
+            <div id="page-emagazine" class="page">
+                <div class="px-base md:px-0 mt-[5px] md:mt-4 flex flex-col gap-8 pb-10">
+                    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                        <div>
+                            <h1 class="text-[26px] md:text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter">E-Magazine</h1>
+                            <p class="text-[11px] md:text-[14px] text-text-secondary">Baca buletin dan majalah bulanan sekolah secara digital.</p>
+                        </div>
+                        <div class="glass-card px-4 py-2 border border-white flex items-center gap-3 shadow-sm w-max">
+                            <i data-lucide="search" class="w-4 h-4 text-text-secondary"></i>
+                            <input type="text" placeholder="Cari edisi..." class="bg-transparent outline-none text-[12px] font-medium w-[150px]">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-x-6 gap-y-10 pt-4" id="emagazine-shelf-container"></div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 6. PAGE: AGENDA (CALENDAR PREMIUM) -->
+            <!-- ========================================== -->
+            <div id="page-agenda" class="page">
+                <div class="px-base md:px-0 mt-[5px] md:mt-4 flex flex-col gap-6 pb-8">
+                    <div>
+                        <h1 class="text-[26px] md:text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter">Kalender Agenda</h1>
+                        <p class="text-[11px] md:text-[14px] text-text-secondary">Pantau jadwal kegiatan, ujian, dan libur sekolah.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                        <div class="md:col-span-8 flex flex-col gap-5">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-[18px] md:text-[22px] font-black text-brand-navy">Daftar Agenda</h3>
+                                <div class="px-4 py-1.5 glass-strong rounded-full text-[12px] font-bold text-brand-blue border border-white shadow-sm flex items-center gap-2 cursor-pointer" onclick="toggleMonthYearPicker()">
+                                    <span id="current-agenda-month-list">November 2026</span> <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                                </div>
+                            </div>
+                            <div id="agenda-list-container" class="flex flex-col gap-4"></div>
+                        </div>
+
+                        <div class="md:col-span-4 glass-card p-6 border border-white self-start sticky top-[100px] hidden md:block">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="font-black text-[18px] text-brand-navy" id="full-cal-title-desk">November 2026</h3>
+                                <div class="flex gap-2">
+                                    <button class="w-8 h-8 rounded-full glass flex items-center justify-center text-text-secondary shadow-sm hover:bg-white" onclick="changeAgendaMonth(-1)"><i data-lucide="chevron-left" class="w-4 h-4"></i></button>
+                                    <button class="w-8 h-8 rounded-full glass flex items-center justify-center text-text-secondary shadow-sm hover:bg-white" onclick="changeAgendaMonth(1)"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-y-3 gap-x-1 text-center text-[13px] font-bold text-brand-navy" id="agenda-calendar-grid"></div>
+                            <div class="flex gap-4 mt-6 pt-5 border-t border-white/50 justify-center">
+                                <div class="flex items-center gap-2 text-[11px] text-text-secondary font-medium"><span class="w-3 h-3 rounded-full bg-brand-orange shadow-sm"></span> Ada Acara</div>
+                                <div class="flex items-center gap-2 text-[11px] text-text-secondary font-medium"><span class="w-3 h-3 rounded-full bg-brand-blue shadow-sm"></span> Dipilih</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 7. PAGE: PRESTASI (PODIUM & GRID) -->
+            <!-- ========================================== -->
+            <div id="page-prestasi" class="page">
+                <div class="px-base md:px-0 mt-[5px] md:mt-4 flex flex-col gap-8 pb-10">
+                    <div>
+                        <h1 class="text-[26px] md:text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter">Hall of Fame</h1>
+                        <p class="text-[11px] md:text-[14px] text-text-secondary w-full md:w-[60%]">Apresiasi tertinggi untuk setiap pencapaian luar biasa warga sekolah di berbagai tingkat kompetisi.</p>
+                    </div>
+
+                    <div id="prestasi-podium-container"></div>
+
+                    <div class="flex justify-between items-end mt-4 border-b border-white/50 pb-4">
+                        <h3 class="text-[20px] font-black text-brand-navy">Daftar Prestasi</h3>
+                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1" id="prestasi-filters">
+                            <button onclick="filterPrestasi('Semua', this)" class="prestasi-filter-btn px-4 py-2 rounded-full text-[11px] font-bold bg-white text-yellow-600 shadow-sm transition-all border border-yellow-200">Semua</button>
+                            <button onclick="filterPrestasi('Akademik', this)" class="prestasi-filter-btn px-4 py-2 rounded-full text-[11px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap">Akademik</button>
+                            <button onclick="filterPrestasi('Non-Akademik', this)" class="prestasi-filter-btn px-4 py-2 rounded-full text-[11px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap">Non-Akademik</button>
+                        </div>
+                    </div>
+
+                    <div class="masonry-grid" id="prestasi-list-container"></div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- 8. PAGE: PORTAL ADMIN REALTIME CMS -->
+            <!-- ========================================== -->
+            <div id="page-admin" class="page">
+                <div class="px-base md:px-0 mt-[5px] md:mt-4 flex flex-col gap-8 pb-12">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-[26px] md:text-[36px] font-black text-brand-navy leading-tight mb-1 tracking-tighter flex items-center gap-3">
+                                <i data-lucide="shield-alert" class="w-8 h-8 text-red-500"></i> Portal Admin CMS
+                            </h1>
+                            <p class="text-[11px] md:text-[14px] text-text-secondary">Pusat kendali konten real-time Alka News.</p>
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
+                            <button onclick="switchAdminTab('berita')" id="btn-adm-berita" class="px-5 py-2.5 rounded-full text-[12px] font-bold bg-brand-blue text-white shadow-md transition-all whitespace-nowrap">Kelola Berita</button>
+                            <button onclick="switchAdminTab('layout')" id="btn-adm-layout" class="px-5 py-2.5 rounded-full text-[12px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap">Layout Berita</button>
+                            <button onclick="switchAdminTab('agenda')" id="btn-adm-agenda" class="px-5 py-2.5 rounded-full text-[12px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap">Kelola Agenda</button>
+                            <button onclick="switchAdminTab('prestasi')" id="btn-adm-prestasi" class="px-5 py-2.5 rounded-full text-[12px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap">Hall of Fame</button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="glass-card p-5 border border-white flex flex-col items-center text-center">
+                            <i data-lucide="file-text" class="w-6 h-6 text-brand-blue mb-2"></i>
+                            <h3 class="text-[28px] font-black text-brand-navy" id="stat-total-berita">0</h3>
+                            <p class="text-[10px] font-bold text-text-secondary uppercase">Total Berita</p>
+                        </div>
+                        <div class="glass-card p-5 border border-white flex flex-col items-center text-center">
+                            <i data-lucide="calendar-days" class="w-6 h-6 text-brand-orange mb-2"></i>
+                            <h3 class="text-[28px] font-black text-brand-navy" id="stat-total-agenda">0</h3>
+                            <p class="text-[10px] font-bold text-text-secondary uppercase">Agenda Aktif</p>
+                        </div>
+                        <div class="glass-card p-5 border border-white flex flex-col items-center text-center">
+                            <i data-lucide="award" class="w-6 h-6 text-yellow-500 mb-2"></i>
+                            <h3 class="text-[28px] font-black text-brand-navy" id="stat-total-prestasi">0</h3>
+                            <p class="text-[10px] font-bold text-text-secondary uppercase">Total Prestasi</p>
+                        </div>
+                        <div class="glass-card p-5 border border-white flex flex-col items-center text-center">
+                            <i data-lucide="activity" class="w-6 h-6 text-green-500 mb-2"></i>
+                            <h3 class="text-[28px] font-black text-brand-navy">100%</h3>
+                            <p class="text-[10px] font-bold text-text-secondary uppercase">System Realtime</p>
+                        </div>
+                    </div>
+
+                    <!-- TAB 1: KELOLA BERITA (SPLIT LAYOUT + IMAGE UPLOAD + RICH TEXT) -->
+                    <div id="adm-tab-berita" class="admin-tab-content grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <div class="lg:col-span-8 glass-card p-6 md:p-8 border border-white admin-form-area">
+                            <h3 class="text-[18px] font-black text-brand-navy mb-5 flex items-center gap-2">
+                                <i data-lucide="plus-circle" class="w-5 h-5 text-brand-blue"></i> Publikasikan Berita Baru
+                            </h3>
+                            <form id="form-add-berita" onsubmit="handleAddNewNews(event)" class="space-y-5">
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Judul Berita *</label>
+                                    <input type="text" id="adm-news-title" required class="w-full px-4 py-3 glass-input text-[14px] font-bold outline-none border border-white text-brand-navy" placeholder="Masukkan judul berita yang menarik...">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Penulis *</label>
+                                        <input type="text" id="adm-news-author" required class="w-full px-4 py-3 glass-input text-[13px] font-semibold outline-none border border-white" placeholder="Nama Penulis / Tim">
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Kategori *</label>
+                                        <select id="adm-news-cat" class="w-full px-4 py-3 glass-input text-[13px] font-semibold outline-none bg-transparent border border-white">
+                                            <option value="Kegiatan">Kegiatan</option>
+                                            <option value="Akademik">Akademik</option>
+                                            <option value="Prestasi">Prestasi</option>
+                                            <option value="Pengumuman">Pengumuman</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Gambar Thumbnail (Sampul) *</label>
+                                    <input type="file" id="upload-thumb-news" class="hidden" accept="image/*" onchange="previewThumbnail(event, 'preview-thumb-container')">
+                                    <div id="preview-thumb-container" onclick="document.getElementById('upload-thumb-news').click()" class="w-full h-[160px] rounded-[14px] border-2 border-dashed border-white/80 bg-white/30 flex flex-col items-center justify-center cursor-pointer hover:bg-white/50 transition-colors shadow-inner overflow-hidden relative">
+                                        <div id="thumb-placeholder" class="flex flex-col items-center pointer-events-none">
+                                            <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-brand-blue mb-2 shadow-sm border border-blue-100">
+                                                <i data-lucide="image-plus" class="w-5 h-5"></i>
+                                            </div>
+                                            <span class="text-[12px] font-bold text-brand-navy">Pilih Gambar atau Tarik ke Sini</span>
+                                            <span class="text-[10px] text-text-secondary mt-0.5">Maksimum 2MB (JPG, PNG)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Isi / Konten Berita *</label>
+                                    <div class="border border-white/60 bg-white/40 rounded-[14px] overflow-hidden shadow-inner flex flex-col">
+                                        <!-- Real Rich Text Toolbar -->
+                                        <div class="bg-white/60 border-b border-white/60 px-3 py-2 flex gap-2.5 items-center flex-wrap shrink-0">
+                                            <button type="button" onclick="formatDoc('bold')" class="w-7 h-7 rounded hover:bg-white flex items-center justify-center font-extrabold text-gray-700 shadow-sm border border-transparent hover:border-gray-200 transition-all">B</button>
+                                            <button type="button" onclick="formatDoc('italic')" class="w-7 h-7 rounded hover:bg-white flex items-center justify-center italic text-gray-700 shadow-sm border border-transparent hover:border-gray-200 transition-all font-serif">I</button>
+                                            
+                                            <!-- Font Modifiers -->
+                                            <div class="flex items-center gap-1.5 ml-2 border-l border-gray-300 pl-2.5">
+                                                <select onchange="formatDoc('fontName', this.value)" class="text-[11px] py-1 px-2 rounded-[6px] border border-gray-200 bg-white/80 outline-none text-gray-700 font-medium cursor-pointer shadow-sm">
+                                                    <option value="">Font</option>
+                                                    <option value="Arial">Arial</option>
+                                                    <option value="Georgia">Georgia</option>
+                                                    <option value="Times New Roman">Times</option>
+                                                    <option value="Verdana">Verdana</option>
+                                                    <option value="Courier New">Courier</option>
+                                                </select>
+                                                
+                                                <select onchange="formatDoc('fontSize', this.value)" class="text-[11px] py-1 px-2 rounded-[6px] border border-gray-200 bg-white/80 outline-none text-gray-700 font-medium cursor-pointer shadow-sm">
+                                                    <option value="">Ukuran</option>
+                                                    <option value="1">Kecil</option>
+                                                    <option value="3">Normal</option>
+                                                    <option value="5">Besar</option>
+                                                    <option value="7">Sangat Besar</option>
+                                                </select>
+                                                
+                                                <div class="flex items-center gap-1 bg-white/80 border border-gray-200 rounded-[6px] px-2 py-1 shadow-sm">
+                                                    <label for="fontColor" class="text-[11px] cursor-pointer text-gray-700 font-medium">Warna:</label>
+                                                    <input type="color" id="fontColor" oninput="formatDoc('foreColor', this.value)" class="w-4 h-4 cursor-pointer border-none p-0 bg-transparent rounded-full overflow-hidden">
+                                                </div>
+                                            </div>
+
+                                            <div class="w-px h-5 bg-gray-300 mx-1"></div>
+                                            
+                                            <input type="file" id="upload-inline-img" class="hidden" accept="image/*" onchange="insertInlineImage(event)">
+                                            <button type="button" onclick="document.getElementById('upload-inline-img').click()" class="w-7 h-7 rounded hover:bg-white flex items-center justify-center text-brand-blue shadow-sm border border-transparent hover:border-blue-200 transition-all bg-blue-50/50" title="Sisipkan Gambar"><i data-lucide="image" class="w-4 h-4"></i></button>
+                                            <button type="button" onclick="addLink()" class="w-7 h-7 rounded hover:bg-white flex items-center justify-center text-gray-700 shadow-sm border border-transparent hover:border-gray-200 transition-all" title="Tautkan Link"><i data-lucide="link" class="w-4 h-4"></i></button>
+                                            <button type="button" onclick="formatDoc('insertUnorderedList')" class="w-7 h-7 rounded hover:bg-white flex items-center justify-center text-gray-700 shadow-sm border border-transparent hover:border-gray-200 transition-all" title="Buat Daftar"><i data-lucide="list" class="w-4 h-4"></i></button>
+                                        </div>
+                                        <!-- Content Editable Area -->
+                                        <div id="adm-news-content" contenteditable="true" class="w-full px-5 py-5 bg-transparent text-[14px] outline-none min-h-[400px] max-h-[800px] overflow-y-auto leading-[1.8] text-brand-navy" placeholder="Tulis rincian berita secara lengkap di sini... Anda bisa memblok teks untuk menebalkan, mewarnai, atau menyisipkan gambar langsung di dalam editor ini."></div>
+                                        <div class="bg-blue-50/50 text-[10px] text-brand-blue font-bold px-4 py-2 border-t border-white/60">💡 Tip: Klik gambar di dalam editor untuk melakukan Crop atau mengubah ukurannya (Resize).</div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end pt-3">
+                                    <button type="submit" class="bg-gradient-to-r from-brand-blue to-blue-600 text-white px-8 py-3.5 rounded-full font-bold text-[13px] shadow-lg shadow-blue-500/30 hover:scale-105 transition-transform flex items-center gap-2">
+                                        <i data-lucide="send" class="w-4 h-4"></i> Terbitkan Sekarang
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Sidebar Right: Daftar Berita -->
+                        <div class="lg:col-span-4 glass-card p-5 border border-white self-start lg:sticky lg:top-[100px] flex flex-col max-h-[600px] lg:max-h-[calc(100vh-120px)] shadow-sm">
+                            <h3 class="text-[16px] font-black text-brand-navy mb-4 border-b border-white/60 pb-3 flex items-center gap-2">
+                                <i data-lucide="server" class="w-4 h-4 text-brand-blue"></i> Daftar Berita Aktif
+                            </h3>
+                            <div class="flex flex-col gap-3 overflow-y-auto no-scrollbar flex-grow pr-1" id="adm-news-table-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: LAYOUT BERITA (BUILDER) -->
+                    <div id="adm-tab-layout" class="admin-tab-content space-y-6 hidden">
+                        <div class="glass-card p-6 md:p-8 border border-white">
+                            <h3 class="text-[18px] font-black text-brand-navy mb-1 flex items-center gap-2">
+                                <i data-lucide="layout" class="w-5 h-5 text-brand-blue"></i> Desain Tata Letak Berita Utama
+                            </h3>
+                            <p class="text-[12px] text-text-secondary mb-6">Atur urutan grup/seksi berita dan ukurannya secara fleksibel. Tampilan akan otomatis menyesuaikan menjadi 100% pada layar sempit (HP).</p>
+                            
+                            <div id="adm-layout-builder-list" class="flex flex-col gap-3">
+                                <!-- Layout Builder Elements injected by JS -->
+                            </div>
+                            
+                            <div class="mt-6 flex justify-end">
+                                <button onclick="applyNewsLayout()" class="bg-gradient-to-r from-brand-blue to-blue-600 text-white px-6 py-3 rounded-full font-bold text-[13px] shadow-md flex items-center gap-2 hover:scale-105 transition-transform">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Terapkan Layout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: KELOLA AGENDA (SPLIT LAYOUT + IMAGE UPLOAD) -->
+                    <div id="adm-tab-agenda" class="admin-tab-content grid grid-cols-1 lg:grid-cols-12 gap-6 items-start hidden">
+                        <div class="lg:col-span-8 glass-card p-6 md:p-8 border border-white admin-form-area">
+                            <h3 class="text-[18px] font-black text-brand-navy mb-5 flex items-center gap-2">
+                                <i data-lucide="calendar-plus" class="w-5 h-5 text-brand-orange"></i> Tambah Agenda Baru
+                            </h3>
+                            <form id="form-add-agenda" onsubmit="handleAddNewAgenda(event)" class="space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                    <div class="md:col-span-2">
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Nama Kegiatan *</label>
+                                        <input type="text" id="adm-agenda-title" required class="w-full px-4 py-3 glass-input text-[13px] font-bold outline-none border border-white" placeholder="Misal: Ujian Tengah Semester">
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Tanggal (Tgl) *</label>
+                                        <input type="number" id="adm-agenda-date" required min="1" max="31" class="w-full px-4 py-3 glass-input text-[13px] font-bold outline-none border border-white" placeholder="Contoh: 18">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Waktu *</label>
+                                        <input type="text" id="adm-agenda-time" required class="w-full px-4 py-3 glass-input text-[13px] outline-none border border-white" placeholder="08.00 - 12.00">
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Lokasi *</label>
+                                        <input type="text" id="adm-agenda-loc" required class="w-full px-4 py-3 glass-input text-[13px] outline-none border border-white" placeholder="Aula Utama">
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Poster Kegiatan (Opsional)</label>
+                                    <input type="file" id="upload-agenda-poster" class="hidden" accept="image/*" onchange="previewThumbnail(event, 'preview-agenda-poster')">
+                                    <div id="preview-agenda-poster" onclick="document.getElementById('upload-agenda-poster').click()" class="w-full h-[140px] rounded-[14px] border-2 border-dashed border-white/80 bg-white/30 flex flex-col items-center justify-center cursor-pointer hover:bg-white/50 transition-colors shadow-inner overflow-hidden relative">
+                                        <div class="flex flex-col items-center pointer-events-none">
+                                            <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-brand-orange mb-2 shadow-sm border border-orange-100">
+                                                <i data-lucide="image-plus" class="w-5 h-5"></i>
+                                            </div>
+                                            <span class="text-[12px] font-bold text-brand-navy">Upload Poster / Brosur</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Keterangan / Rincian</label>
+                                    <div class="border border-white/60 bg-white/40 rounded-[14px] overflow-hidden shadow-inner">
+                                        <textarea rows="6" class="w-full px-4 py-3 bg-transparent text-[13px] outline-none resize-none" placeholder="Tuliskan detail jadwal, pakaian, atau persiapan yang dibutuhkan..."></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-end pt-3">
+                                    <button type="submit" class="bg-gradient-to-r from-brand-orange to-orange-500 text-white px-8 py-3.5 rounded-full font-bold text-[13px] shadow-lg shadow-orange-500/30 hover:scale-105 transition-transform flex items-center gap-2">
+                                        <i data-lucide="plus" class="w-4 h-4"></i> Simpan Agenda
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Sidebar Right: Daftar Agenda -->
+                        <div class="lg:col-span-4 glass-card p-5 border border-white self-start lg:sticky lg:top-[100px] flex flex-col max-h-[600px] lg:max-h-[calc(100vh-120px)] shadow-sm">
+                            <h3 class="text-[16px] font-black text-brand-navy mb-4 border-b border-white/60 pb-3 flex items-center gap-2"><i data-lucide="server" class="w-4 h-4 text-brand-orange"></i> Daftar Agenda Aktif</h3>
+                            <div class="flex flex-col gap-3 overflow-y-auto no-scrollbar flex-grow pr-1" id="adm-agenda-table-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: KELOLA PRESTASI (SPLIT LAYOUT + IMAGE UPLOAD) -->
+                    <div id="adm-tab-prestasi" class="admin-tab-content grid grid-cols-1 lg:grid-cols-12 gap-6 items-start hidden">
+                        <div class="lg:col-span-8 glass-card p-6 md:p-8 border border-white admin-form-area">
+                            <h3 class="text-[18px] font-black text-brand-navy mb-5 flex items-center gap-2">
+                                <i data-lucide="award" class="w-5 h-5 text-yellow-600"></i> Catat Prestasi Baru
+                            </h3>
+                            <form id="form-add-prestasi" onsubmit="handleAddNewPrestasi(event)" class="space-y-5">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Judul Kejuaraan *</label>
+                                        <input type="text" id="adm-pres-title" required class="w-full px-4 py-3 glass-input border border-white text-[13px] font-bold outline-none" placeholder="Juara 1 Lomba Sains...">
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Nama Siswa / Tim *</label>
+                                        <input type="text" id="adm-pres-name" required class="w-full px-4 py-3 glass-input border border-white text-[13px] outline-none" placeholder="Ahmad Zaki (Kelas 6)">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Kategori *</label>
+                                        <select id="adm-pres-cat" class="w-full px-4 py-3 glass-input border border-white text-[13px] font-semibold outline-none bg-transparent">
+                                            <option value="Akademik">Akademik</option>
+                                            <option value="Non-Akademik">Non-Akademik</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Medali *</label>
+                                        <select id="adm-pres-medal" class="w-full px-4 py-3 glass-input border border-white text-[13px] font-semibold outline-none bg-transparent">
+                                            <option value="🥇">🥇 Medali Emas (Gold)</option>
+                                            <option value="🥈">🥈 Medali Perak (Silver)</option>
+                                            <option value="🥉">🥉 Medali Perunggu (Bronze)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Foto Momen Prestasi (Wajib untuk Podium Utama)</label>
+                                    <input type="file" id="upload-prestasi-foto" class="hidden" accept="image/*" onchange="previewThumbnail(event, 'preview-prestasi-foto')">
+                                    <div id="preview-prestasi-foto" onclick="document.getElementById('upload-prestasi-foto').click()" class="w-full h-[140px] rounded-[14px] border-2 border-dashed border-white/80 bg-white/30 flex flex-col items-center justify-center cursor-pointer hover:bg-white/50 transition-colors shadow-inner overflow-hidden relative">
+                                        <div class="flex flex-col items-center pointer-events-none">
+                                            <div class="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 mb-2 shadow-sm border border-yellow-100">
+                                                <i data-lucide="image-plus" class="w-4 h-4"></i>
+                                            </div>
+                                            <span class="text-[12px] font-bold text-brand-navy">Upload Foto Momen Juara</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-[11px] font-extrabold text-brand-navy mb-1 block uppercase">Cerita Perjuangan / Deskripsi</label>
+                                    <div class="border border-white/60 bg-white/40 rounded-[14px] overflow-hidden shadow-inner">
+                                        <textarea rows="5" class="w-full px-4 py-3 bg-transparent text-[13px] outline-none resize-none" placeholder="Ceritakan singkat bagaimana siswa meraih prestasi ini..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-3">
+                                    <button type="submit" class="bg-gradient-to-r from-yellow-500 to-amber-600 text-white px-8 py-3.5 rounded-full font-bold text-[13px] shadow-lg shadow-yellow-500/30 hover:scale-105 transition-transform flex items-center gap-2">
+                                        <i data-lucide="medal" class="w-4 h-4"></i> Catat Prestasi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Sidebar Right: Daftar Prestasi -->
+                        <div class="lg:col-span-4 glass-card p-5 border border-white self-start lg:sticky lg:top-[100px] flex flex-col max-h-[600px] lg:max-h-[calc(100vh-120px)] shadow-sm">
+                            <h3 class="text-[16px] font-black text-brand-navy mb-4 border-b border-white/60 pb-3 flex items-center gap-2"><i data-lucide="server" class="w-4 h-4 text-yellow-600"></i> Daftar Hall of Fame Aktif</h3>
+                            <div class="flex flex-col gap-3 overflow-y-auto no-scrollbar flex-grow pr-1" id="adm-prestasi-table-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAGE: DETAIL BERITA (Global) -->
+            <div id="page-berita-detail" class="page glass-card min-h-screen pb-[80px] lg:rounded-[24px]">
+                <div class="flex items-center justify-between px-base h-[60px] sticky top-0 z-30 bg-white/60 backdrop-blur-xl border-b border-white shadow-sm">
+                    <button class="w-[38px] h-[38px] rounded-full glass flex items-center justify-center text-text-primary -ml-2" onclick="window.history.back()"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                    <div class="flex gap-2 text-text-secondary">
+                        <button class="w-[38px] h-[38px] rounded-full glass flex items-center justify-center"><i data-lucide="bookmark" class="w-4 h-4"></i></button>
+                        <button class="w-[38px] h-[38px] rounded-full glass flex items-center justify-center"><i data-lucide="share-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+                <div class="w-full h-[250px] md:h-[450px] relative">
+                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover" id="detail-img">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                </div>
+                <div class="px-base md:px-12 py-8 max-w-[800px] mx-auto relative -mt-[80px] bg-white/95 backdrop-blur-xl rounded-t-[32px] shadow-[0_-10px_30px_rgba(0,0,0,0.1)] border-t border-white">
+                    <span class="bg-brand-blue text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider mb-4 inline-block shadow-sm" id="detail-cat">Kegiatan</span>
+                    <h1 class="text-[24px] md:text-[36px] font-black text-brand-navy leading-[1.2] mb-4 tracking-tight" id="detail-title">Judul Berita Memuat...</h1>
+                    <div class="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-brand-blue font-bold">A</div>
+                        <div>
+                            <p class="text-[12px] font-bold text-brand-navy" id="detail-author">Tim Redaksi Alka</p>
+                            <p class="text-[11px] text-text-secondary" id="detail-date">10 Oktober 2026 · 3 min read</p>
+                        </div>
+                    </div>
+                    <div class="text-[14px] md:text-[16px] text-gray-700 leading-[1.8] space-y-6 font-medium" id="detail-content">
+                        <p>Memuat konten berita secara penuh. Silakan kembali untuk melihat daftar berita lainnya.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div> 
+    </main>
+
+    <!-- ============================================================== -->
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <!-- ============================================================== -->
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-[60] glass-strong border-b-0 border-x-0 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_40px_rgba(35,72,110,0.1)] rounded-t-[24px]">
+        <div class="flex justify-between items-center h-[65px] px-2 max-w-[500px] mx-auto">
+            <a href="#/berita" class="mob-nav-btn flex flex-col items-center justify-center w-full h-full gap-1 nav-item transition-all relative" data-target="#/berita">
+                <i data-lucide="layout-template" class="w-[22px] h-[22px] nav-icon text-text-secondary relative"></i><span class="text-[9px] font-bold text-text-secondary relative">Berita</span>
+            </a>
+            <a href="#/agenda" class="mob-nav-btn flex flex-col items-center justify-center w-full h-full gap-1 nav-item transition-all relative" data-target="#/agenda">
+                <i data-lucide="calendar-days" class="w-[22px] h-[22px] nav-icon text-text-secondary relative"></i><span class="text-[9px] font-bold text-text-secondary relative">Agenda</span>
+            </a>
+            <a href="#/prestasi" class="mob-nav-btn flex flex-col items-center justify-center w-full h-full gap-1 nav-item transition-all relative" data-target="#/prestasi">
+                <i data-lucide="award" class="w-[22px] h-[22px] nav-icon text-text-secondary relative"></i><span class="text-[9px] font-bold text-text-secondary relative">Prestasi</span>
+            </a>
+            <a href="#/buletin" class="mob-nav-btn flex flex-col items-center justify-center w-full h-full gap-1 nav-item transition-all relative" data-target="#/buletin">
+                <i data-lucide="pin" class="w-[22px] h-[22px] nav-icon text-text-secondary relative"></i><span class="text-[9px] font-bold text-text-secondary relative">Edaran</span>
+            </a>
+            <button class="mob-nav-btn flex flex-col items-center justify-center w-full h-full gap-1 nav-item transition-all relative" onclick="toggleSheetNear('sheet-lainnya')">
+                <i data-lucide="grid-3x3" class="w-[22px] h-[22px] nav-icon text-text-secondary relative"></i><span class="text-[9px] font-bold text-text-secondary relative">Lainnya</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- OVERLAYS & SHEETS -->
+    <div id="overlay-sheets" class="overlay fixed inset-0 bg-brand-navy/40 backdrop-blur-[4px] z-[50] md:hidden" onclick="closeAllSheets()"></div>
+    
+    <div id="sheet-lainnya" class="bottom-sheet fixed bottom-[80px] left-4 right-4 z-[55] glass-strong rounded-[28px] p-6 md:hidden shadow-2xl border border-white/80">
+        <div class="flex justify-between items-center mb-5">
+            <h3 class="text-[18px] font-black text-brand-navy">Jelajah Ekstra</h3>
+            <button class="w-8 h-8 rounded-full glass border border-white flex items-center justify-center text-text-secondary shadow-sm" onclick="closeAllSheets()"><i data-lucide="x" class="w-4 h-4"></i></button>
+        </div>
+        <div class="flex flex-col gap-3">
+            <div class="glass-card p-4 flex items-center justify-between cursor-pointer active:scale-95 border border-white shadow-sm" onclick="navigate('#/artikel'); closeAllSheets()">
+                <div class="flex items-center gap-3 font-bold text-[14px] text-brand-navy"><div class="w-10 h-10 bg-purple-50/50 rounded-[12px] flex items-center justify-center text-purple-600 border border-purple-100 shadow-sm"><i data-lucide="feather" class="w-5 h-5"></i></div> Karya Siswa</div><i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary"></i>
+            </div>
+            <div class="glass-card p-4 flex items-center justify-between cursor-pointer active:scale-95 border border-white shadow-sm" onclick="navigate('#/emagazine'); closeAllSheets()">
+                <div class="flex items-center gap-3 font-bold text-[14px] text-brand-navy"><div class="w-10 h-10 bg-blue-50/50 rounded-[12px] flex items-center justify-center text-brand-blue border border-blue-100 shadow-sm"><i data-lucide="book-open" class="w-5 h-5"></i></div> E-Magazine Bulanan</div><i data-lucide="chevron-right" class="w-4 h-4 text-text-secondary"></i>
+            </div>
+            <div class="admin-access-element hidden mt-2 pt-2 border-t border-white/50">
+                <div class="glass-card p-4 flex items-center justify-between cursor-pointer active:scale-95 border border-red-100 bg-red-50/30 shadow-sm" onclick="navigate('#/admin'); closeAllSheets()">
+                    <div class="flex items-center gap-3 font-bold text-[14px] text-red-600"><div class="w-10 h-10 bg-red-100/50 rounded-[12px] flex items-center justify-center text-red-500 border border-red-200 shadow-sm"><i data-lucide="shield-alert" class="w-5 h-5"></i></div> Portal Admin CMS</div><i data-lucide="chevron-right" class="w-4 h-4 text-red-400"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Month Picker Popup -->
+    <div id="month-picker-popup" class="fixed inset-0 z-[80] bg-brand-navy/40 backdrop-blur-[4px] hidden flex items-center justify-center p-4" onclick="toggleMonthYearPicker()">
+        <div class="glass-strong p-6 rounded-[28px] w-full max-w-[320px] shadow-2xl text-center border border-white/80" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-6">
+                <button class="w-10 h-10 rounded-full glass border border-white flex items-center justify-center text-text-primary active:scale-95 shadow-sm" onclick="changePickerYear(-1)"><i data-lucide="chevron-left" class="w-5 h-5"></i></button>
+                <h4 class="font-black text-[20px] text-brand-navy" id="picker-year-display">2026</h4>
+                <button class="w-10 h-10 rounded-full glass border border-white flex items-center justify-center text-text-primary active:scale-95 shadow-sm" onclick="changePickerYear(1)"><i data-lucide="chevron-right" class="w-5 h-5"></i></button>
+            </div>
+            <div class="grid grid-cols-3 gap-3 mb-6 text-[13px]">
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Jan')">Jan</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Feb')">Feb</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Mar')">Mar</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Apr')">Apr</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Mei')">Mei</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Jun')">Jun</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Jul')">Jul</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Agu')">Agu</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Sep')">Sep</button>
+                <button class="p-3 glass-card font-bold bg-brand-blue text-white shadow-lg border border-blue-400" onclick="selectMonthYear('Okt')">Okt</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Nov')">Nov</button>
+                <button class="p-3 glass-card font-bold border border-white shadow-sm hover:bg-white transition-colors" onclick="selectMonthYear('Des')">Des</button>
+            </div>
+            <button class="text-[13px] font-bold text-brand-blue bg-blue-50/50 w-full py-3 rounded-[12px] border border-blue-100 hover:bg-blue-100 transition-colors" onclick="toggleMonthYearPicker()">Batal</button>
+        </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SCRIPTS (LOGIC, DATA, REALTIME CMS) -->
+    <!-- ============================================================== -->
+    <script>
+        lucide.createIcons();
+
+        const userSession = { username: "Salsabila", role: "admin" };
+        function checkAdminAccess() {
+            document.querySelectorAll('.admin-access-element').forEach(el => {
+                if(userSession.role === 'admin') el.classList.remove('hidden');
+            });
+        }
+
+        // --- MUTABLE DATABASE ---
+        let MOCK_NEWS = Array.from({length: 25}, (_, i) => ({
+            id: i + 1,
+            title: `Liputan Khusus Dunia Pendidikan dan Prestasi Sekolah Bagian ${i+1}`,
+            cat: ["Kegiatan", "Akademik", "Pengumuman", "Prestasi"][i % 4],
+            author: "Tim Redaksi",
+            date: `${(i % 28) + 1} Agu 2026`,
+            excerpt: `Laporan mendalam mengenai kegiatan inovatif ke-${i+1} yang dilaksanakan di lingkungan sekolah guna mengasah bakat peserta didik.`,
+            content_html: `<p>Laporan mendalam mengenai kegiatan inovatif ke-${i+1} yang dilaksanakan di lingkungan sekolah guna mengasah bakat peserta didik.</p>`,
+            img: `https://images.unsplash.com/photo-${["1523050854058-8df90110c9f1", "1567168539593-59673ab5be61", "1434030216411-0b793f4b4173", "1542601906990-b4d3fb778b09"][i % 4]}?auto=format&fit=crop&q=80&w=600`,
+            color: ["text-orange-600", "text-green-600", "text-red-500", "text-purple-600"][i % 4]
+        }));
+
+        let MOCK_AGENDA = [
+            { id: 12, title: "Upacara Peringatan Hari Sumpah Pemuda", time: "07.00 - 08.00", loc: "Lapangan Utama", color: "text-red-500", bg: "bg-red-50/50", bd: "border-red-200" },
+            { id: 14, title: "Ujian Praktik Sains Terpadu", time: "08.00 - 11.00", loc: "Laboratorium", color: "text-blue-600", bg: "bg-blue-50/50", bd: "border-blue-200" },
+            { id: 15, title: "Batas Akhir Pembayaran SPP Bulan Ini", time: "08.00 - 14.00", loc: "Tata Usaha", color: "text-orange-500", bg: "bg-orange-50/50", bd: "border-orange-200" }
+        ];
+
+        let MOCK_PRESTASI = [
+            { id: 1, title: "Medali Emas Olimpiade Sains", name: "Ahmad Zaki (Kelas 6)", cat: "Akademik", date: "10 Okt 2026", medal: "🥇", glow: "from-yellow-200 to-yellow-400" },
+            { id: 2, title: "Juara 1 Pidato Bahasa Arab", name: "Fathimah Zahra (Kelas 5)", cat: "Akademik", date: "5 Okt 2026", medal: "🥇", glow: "from-yellow-200 to-yellow-400" },
+            { id: 3, title: "Juara 2 Pencak Silat Daerah", name: "Bima Arya (Kelas 4)", cat: "Non-Akademik", date: "28 Sep 2026", medal: "🥈", glow: "from-gray-200 to-gray-400" }
+        ];
+
+        const MOCK_BULETIN = [
+            { title: "Pemberitahuan Libur Menyambut Awal Ramadhan 1448 H", date: "10 Okt 2026", urgency: "Tinggi", color: "bg-red-50 text-red-600 border-red-200" },
+            { title: "Edaran Pengambilan Seragam Batik Baru Kelas 1", date: "8 Okt 2026", urgency: "Sedang", color: "bg-orange-50 text-orange-600 border-orange-200" }
+        ];
+
+        const MOCK_ARTIKEL = [
+            { title: "Sekolahku Syurgaku", type: "Puisi", author: "Nisa (Kls 4)", excerpt: "Setiap pagi mentari menyapa, ku langkahkan kaki dengan ceria...", img: "https://images.unsplash.com/photo-1544717305-2782549b5136?w=200&q=80" },
+            { title: "Petualangan Sang Semut", type: "Cerpen", author: "Farel (Kls 5)", excerpt: "Di suatu pagi yang cerah, barisan semut merah bergotong royong...", img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=200&q=80" }
+        ];
+
+        const MOCK_EMAGAZINE = [
+            { ed: "Edisi Okt 2026", title: "Inovasi Pembelajaran Digital", cover: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&q=80" },
+            { ed: "Edisi Sep 2026", title: "Semarak Kemerdekaan Alka", cover: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&q=80" }
+        ];
+
+        // --- STATE LAYOUT BUILDER ---
+        let NEWS_LAYOUT = [
+            { id: 'hero', name: 'Sorotan Utama (Banner)', type: 'hero', size: 'full' },
+            { id: 'bento', name: 'Berita Hangat (Bento Grid)', type: 'bento', size: 'full' },
+            { id: 'swipe', name: 'Fokus Akademik (Horizontal)', type: 'swipe', size: 'full' },
+            { id: 'list', name: 'Arsip Berita Terbaru (Daftar)', type: 'list', size: 'full' }
+        ];
+
+        // --- TOAST SYSTEM ---
+        function showToast(msg) {
+            const toast = document.getElementById('toast-notif');
+            document.getElementById('toast-msg').innerText = msg;
+            toast.style.top = '24px';
+            setTimeout(() => { toast.style.top = '-100px'; }, 3500);
+        }
+
+        // --- RENDER BENTO DASHBOARD ---
+        function renderHomeDynamic() {
+            const mH = document.getElementById('mob-bento-hero');
+            const dH = document.getElementById('desk-bento-hero');
+            if(mH && dH && MOCK_NEWS.length > 0) {
+                const heroData = MOCK_NEWS[0];
+                const heroHTML = `
+                    <img src="${heroData.img}" class="absolute inset-0 w-full h-full object-cover z-0">
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-navy/90 via-brand-navy/40 to-transparent z-10"></div>
+                    <div class="absolute top-4 left-4 z-20"><span class="bg-white/90 text-brand-blue px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-md backdrop-blur border border-white">Headline</span></div>
+                    <div class="absolute bottom-5 left-5 right-[50px] md:bottom-8 md:left-8 md:right-[100px] z-20">
+                        <h2 class="text-[20px] md:text-[32px] font-black text-white leading-tight mb-2 drop-shadow-md">${heroData.title}</h2>
+                        <p class="text-[11px] md:text-[14px] text-white/80 font-medium line-clamp-2 drop-shadow">${heroData.excerpt}</p>
+                    </div>
+                    <div class="absolute bottom-5 right-5 md:bottom-8 md:right-8 z-20 w-10 h-10 md:w-14 md:h-14 rounded-full bg-white/30 backdrop-blur border border-white/50 flex items-center justify-center text-white shadow-lg"><i data-lucide="arrow-right" class="w-5 h-5 md:w-6 md:h-6"></i></div>
+                `;
+                mH.innerHTML = heroHTML; dH.innerHTML = heroHTML;
+            }
+
+            if(document.getElementById('desk-bento-prestasi-title') && MOCK_PRESTASI.length > 0) {
+                document.getElementById('desk-bento-prestasi-title').innerText = MOCK_PRESTASI[0].title;
+                document.getElementById('desk-bento-prestasi-date').innerText = `${MOCK_PRESTASI[0].name} • ${MOCK_PRESTASI[0].date}`;
+            }
+
+            const agendaHTML = MOCK_AGENDA.slice(0,3).map(item => `
+                <div class="flex items-center gap-3 cursor-pointer group" onclick="navigate('#/agenda')">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-[12px] ${item.bg} flex flex-col items-center justify-center shrink-0 border ${item.bd} group-hover:scale-105 transition-transform">
+                        <span class="text-[14px] md:text-[16px] font-black ${item.color} leading-none mb-0.5">${item.id}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-[12px] md:text-[14px] text-brand-navy leading-tight line-clamp-1 group-hover:text-brand-blue">${item.title}</h4>
+                        <p class="text-[10px] text-text-secondary mt-0.5"><i data-lucide="clock" class="w-3 h-3 inline"></i> ${item.time}</p>
+                    </div>
+                </div>
+            `).join('');
+            if(document.getElementById('mob-bento-agenda')) document.getElementById('mob-bento-agenda').innerHTML = agendaHTML;
+            if(document.getElementById('desk-bento-agenda')) document.getElementById('desk-bento-agenda').innerHTML = agendaHTML;
+
+            const buletinHTML = MOCK_BULETIN.slice(0,3).map(item => `
+                <div class="p-3 glass rounded-[12px] border border-white shadow-sm flex flex-col gap-1 cursor-pointer hover:bg-white/80 transition-colors" onclick="navigate('#/buletin')">
+                    <div class="flex items-center gap-2 mb-1"><span class="w-2 h-2 rounded-full ${item.color.split(' ')[1].replace('text-', 'bg-')}"></span> <span class="text-[9px] font-bold ${item.color.split(' ')[1]} uppercase tracking-wider">${item.urgency}</span></div>
+                    <h4 class="font-bold text-[13px] text-brand-navy leading-snug line-clamp-1">${item.title}</h4>
+                </div>
+            `).join('');
+            if(document.getElementById('desk-bento-buletin')) document.getElementById('desk-bento-buletin').innerHTML = buletinHTML;
+
+            const karyaHTML = MOCK_ARTIKEL.slice(0,2).map((item) => `
+                <div class="p-3 glass rounded-[14px] border border-white shadow-sm flex items-center gap-3 cursor-pointer hover:-translate-y-1 transition-transform" onclick="navigate('#/artikel')">
+                    <img src="${item.img}" class="w-12 h-12 rounded-[10px] object-cover border border-white">
+                    <div>
+                        <span class="text-[9px] font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded shadow-sm">${item.type}</span>
+                        <h4 class="font-bold text-[13px] text-brand-navy leading-tight mt-1 line-clamp-1">${item.title}</h4>
+                        <p class="text-[10px] text-text-secondary italic line-clamp-1">oleh ${item.author}</p>
+                    </div>
+                </div>
+            `).join('');
+            if(document.getElementById('desk-bento-karya')) document.getElementById('desk-bento-karya').innerHTML = karyaHTML;
+        }
+
+        // --- RENDER BERITA MAGAZINE LAYOUT (WITH LAYOUT BUILDER) ---
+        function filterNews(catFilter = 'Semua', btn) {
+            if(btn) {
+                document.querySelectorAll('.news-filter-btn').forEach(b => { 
+                    b.className = "news-filter-btn px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap bg-white/40 text-text-secondary border border-white/60 backdrop-blur-md flex items-center gap-2"; 
+                });
+                const activeClass = btn.getAttribute('data-active') || 'active-semua';
+                btn.className = `news-filter-btn ${activeClass} px-5 py-2.5 rounded-[12px] text-[13px] font-bold transition-all whitespace-nowrap backdrop-blur-md flex items-center gap-2`;
+            }
+            
+            const container = document.getElementById('news-list-container');
+            if(!container) return;
+
+            let html = '';
+            if(catFilter === 'Semua') {
+                html += '<div class="flex flex-wrap -mx-3 items-stretch">';
+                NEWS_LAYOUT.forEach(block => {
+                    // Safe column wrapper: Full on mobile/tablet, Half on XL desktops if half size chosen
+                    const widthClass = block.size === 'half' ? 'w-full xl:w-1/2 px-3 mb-8 flex flex-col' : 'w-full px-3 mb-8 flex flex-col';
+                    let innerHtml = '';
+                    
+                    if (block.type === 'hero' && MOCK_NEWS.length > 0) {
+                        innerHtml = `
+                        <div class="glass-card p-4 md:p-6 border border-white/80 relative overflow-hidden shadow-sm cursor-pointer group flex flex-col md:flex-row gap-6 md:items-center bg-white/40 h-full w-full" onclick="showNewsDetail(${MOCK_NEWS[0].id})">
+                            <div class="w-full md:w-[60%] h-[200px] md:h-[300px] rounded-[16px] overflow-hidden relative shadow-md shrink-0">
+                                <img src="${MOCK_NEWS[0].img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-3 left-3 bg-white/90 text-brand-blue px-3 py-1 rounded-full text-[10px] font-black uppercase shadow-sm border border-white">Headline</div>
+                            </div>
+                            <div class="w-full md:w-[40%] flex flex-col justify-center relative z-10 pr-4">
+                                <div class="flex items-center gap-2 mb-3"><i data-lucide="calendar" class="w-4 h-4 text-text-secondary"></i> <span class="text-[12px] text-text-secondary font-medium">${MOCK_NEWS[0].date}</span></div>
+                                <h2 class="text-[24px] xl:text-[32px] font-black text-brand-navy leading-tight mb-4 tracking-tight">${MOCK_NEWS[0].title}</h2>
+                                <p class="text-[13px] text-text-secondary leading-relaxed mb-6 line-clamp-3">${MOCK_NEWS[0].excerpt}</p>
+                                <button class="bg-gradient-to-r from-brand-blue to-blue-500 text-white font-bold text-[12px] px-6 py-3 rounded-[12px] shadow-lg flex items-center justify-center gap-2 w-max">Baca Selengkapnya <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>`;
+                    } else if (block.type === 'bento' && MOCK_NEWS.length > 1) {
+                        innerHtml = `
+                        <div class="flex flex-col h-full w-full">
+                            <div class="flex items-center justify-between mb-4 mt-2">
+                                <h3 class="text-[20px] font-black text-brand-navy flex items-center gap-2"><i data-lucide="flame" class="w-5 h-5 text-brand-orange"></i> Sedang Hangat</h3>
+                            </div>
+                            <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 flex-grow">
+                                <div class="xl:col-span-7 glass-card p-5 border border-white flex flex-col justify-between cursor-pointer group shadow-sm bg-gradient-to-br from-white/60 to-transparent" onclick="showNewsDetail(${MOCK_NEWS[1].id})">
+                                    <div class="w-full h-[240px] rounded-[16px] overflow-hidden mb-4 relative shadow-sm border border-white/50"><img src="${MOCK_NEWS[1].img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform"></div>
+                                    <span class="text-[10px] font-black ${MOCK_NEWS[1].color || 'text-brand-orange'} uppercase mb-2 tracking-wider">${MOCK_NEWS[1].cat}</span>
+                                    <h3 class="font-black text-[20px] text-brand-navy leading-tight mb-2">${MOCK_NEWS[1].title}</h3>
+                                    <p class="text-[12px] text-text-secondary line-clamp-2">${MOCK_NEWS[1].excerpt}</p>
+                                </div>
+                                <div class="xl:col-span-5 flex flex-col gap-5">
+                                    ${MOCK_NEWS.slice(2,4).map(item => `
+                                        <div class="glass-card p-4 border border-white flex gap-4 items-stretch cursor-pointer group shadow-sm flex-grow bg-white/40 hover:bg-white/80 transition-colors" onclick="showNewsDetail(${item.id})">
+                                            <div class="w-[120px] rounded-[12px] overflow-hidden relative shadow-sm border border-white/50 shrink-0"><img src="${item.img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform"></div>
+                                            <div class="flex flex-col justify-center py-1">
+                                                <span class="text-[9px] font-black ${item.color || 'text-brand-blue'} uppercase mb-1.5 tracking-wider bg-white/60 px-2 py-0.5 rounded w-max border border-white/80 shadow-sm">${item.cat}</span>
+                                                <h4 class="font-extrabold text-[14px] text-brand-navy leading-snug line-clamp-2 mb-1.5">${item.title}</h4>
+                                                <span class="text-[10px] text-text-secondary flex items-center gap-1 font-medium"><i data-lucide="clock" class="w-3 h-3"></i> ${item.date}</span>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>`;
+                    } else if (block.type === 'swipe' && MOCK_NEWS.length > 4) {
+                        innerHtml = `
+                        <div class="flex flex-col h-full w-full">
+                            <h3 class="text-[18px] font-extrabold text-brand-navy mb-4 flex items-center gap-2 mt-2"><i data-lucide="book-open" class="w-5 h-5 text-brand-blue"></i> Fokus Akademik & Wawasan</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 flex-grow">
+                                ${MOCK_NEWS.slice(4,7).map(item => `
+                                    <div class="glass-card p-4 border border-white flex flex-col cursor-pointer hover:scale-[1.02] transition-transform shadow-sm bg-white/40" onclick="showNewsDetail(${item.id})">
+                                        <img src="${item.img}" class="w-full h-[140px] rounded-[12px] object-cover mb-3 border border-white">
+                                        <h4 class="font-extrabold text-[14px] text-brand-navy leading-tight mb-2 line-clamp-2">${item.title}</h4>
+                                        <p class="text-[11px] text-text-secondary line-clamp-2 mb-4 flex-grow">${item.excerpt}</p>
+                                        <span class="text-[10px] text-brand-blue font-bold mt-auto flex items-center">Selengkapnya <i data-lucide="chevron-right" class="w-3.5 h-3.5 ml-1"></i></span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                    } else if (block.type === 'list' && MOCK_NEWS.length > 7) {
+                        innerHtml = `
+                        <div class="flex flex-col h-full w-full">
+                            <h3 class="text-[18px] font-extrabold text-brand-navy mb-4 mt-2">Arsip Berita Terbaru</h3>
+                            <div class="glass-card border border-white divide-y divide-white/60 p-2 shadow-sm flex-grow bg-white/40">
+                                ${MOCK_NEWS.slice(7, 12).map(item => `
+                                    <div class="p-3.5 flex gap-4 items-center cursor-pointer hover:bg-white/60 transition-colors" onclick="showNewsDetail(${item.id})">
+                                        <img src="${item.img}" class="w-[80px] h-[60px] rounded-[10px] object-cover border border-white shrink-0">
+                                        <div class="flex-grow">
+                                            <span class="text-[9px] font-bold text-gray-500 uppercase">${item.cat} • ${item.date}</span>
+                                            <h4 class="font-extrabold text-[14px] text-brand-navy leading-snug line-clamp-1">${item.title}</h4>
+                                            <p class="text-[11px] text-text-secondary line-clamp-1">${item.excerpt}</p>
+                                        </div>
+                                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 shrink-0"></i>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>`;
+                    }
+                    
+                    if (innerHtml) {
+                        html += `<div class="${widthClass}">${innerHtml}</div>`;
+                    }
+                });
+                html += '</div>';
+
+            } else {
+                const filtered = MOCK_NEWS.filter(i => i.cat === catFilter);
+                html += `
+                <div class="masonry-grid mt-4">
+                    ${filtered.map(item => `
+                        <div class="masonry-item glass-card p-4 border border-white/80 flex flex-col cursor-pointer shadow-sm bg-white/40 hover:bg-white/80 transition-all hover:-translate-y-1" onclick="showNewsDetail(${item.id})">
+                            <div class="w-full h-[180px] rounded-[14px] overflow-hidden mb-4 relative border border-white/50 shadow-sm">
+                                <img src="${item.img}" class="w-full h-full object-cover">
+                                <div class="absolute top-2 right-2 px-2.5 py-1 ${item.bg || 'bg-white'} ${item.color || 'text-brand-navy'} border rounded-[8px] text-[9px] font-black uppercase tracking-wider shadow-sm backdrop-blur-md">${item.cat}</div>
+                            </div>
+                            <div class="flex items-center gap-1.5 text-[10px] text-text-secondary font-medium mb-2"><i data-lucide="calendar" class="w-3 h-3"></i> ${item.date}</div>
+                            <h4 class="font-extrabold text-[16px] text-brand-navy leading-tight mb-2">${item.title}</h4>
+                            <p class="text-[12px] text-text-secondary line-clamp-3 mb-4">${item.excerpt}</p>
+                            <button class="bg-gray-50/50 hover:bg-white text-brand-navy font-bold text-[11px] py-2.5 rounded-[10px] border border-white shadow-sm flex items-center justify-center gap-1.5 w-full mt-auto transition-colors">
+                                Baca Selengkapnya <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>`;
+            }
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        // Show Details Logic (To connect list to detail page)
+        function showNewsDetail(newsId) {
+            const newsItem = MOCK_NEWS.find(n => n.id === newsId);
+            if(newsItem) {
+                document.getElementById('detail-title').innerText = newsItem.title;
+                document.getElementById('detail-cat').innerText = newsItem.cat;
+                document.getElementById('detail-date').innerText = `${newsItem.date} · 3 min read`;
+                document.getElementById('detail-author').innerText = newsItem.author || "Tim Redaksi Alka";
+                document.getElementById('detail-img').src = newsItem.img;
+                
+                // Show raw html if exists, else text excerpt
+                document.getElementById('detail-content').innerHTML = newsItem.content_html || `<p>${newsItem.excerpt}</p>`;
+            }
+            navigate('#/berita/detail');
+        }
+
+        // --- RENDER AGENDA ---
+        function renderAgendaList() {
+            const container = document.getElementById('agenda-list-container');
+            if(!container) return;
+            container.innerHTML = MOCK_AGENDA.map(item => `
+                <div class="glass-card p-4 flex gap-4 items-stretch border border-white/80 shadow-sm bg-white/40 hover:bg-white transition-colors cursor-pointer group">
+                    <div class="w-[60px] rounded-[16px] ${item.bg} flex flex-col items-center justify-center text-center shrink-0 py-2 border ${item.bd} shadow-inner group-hover:scale-105 transition-transform">
+                        <span class="text-[10px] font-bold ${item.color} opacity-80 uppercase leading-none mb-1">Okt</span>
+                        <span class="text-[22px] font-black ${item.color} leading-none mb-1">${item.id}</span>
+                    </div>
+                    <div class="flex-grow flex flex-col justify-center py-1">
+                        <h4 class="font-extrabold text-[15px] text-brand-navy mb-1.5 leading-tight group-hover:text-brand-blue transition-colors">${item.title}</h4>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-text-secondary font-medium">
+                            <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${item.time} WIB</span>
+                            <span class="flex items-center gap-1"><i data-lucide="map-pin" class="w-3.5 h-3.5"></i> ${item.loc}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center px-1">
+                        <button class="w-8 h-8 rounded-full glass border border-white flex items-center justify-center text-text-secondary shadow-sm group-hover:bg-brand-blue group-hover:text-white transition-colors group-hover:border-transparent"><i data-lucide="chevron-right" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- RENDER PRESTASI ---
+        function filterPrestasi(catFilter = 'Semua', btn) {
+            document.querySelectorAll('.prestasi-filter-btn').forEach(b => { 
+                b.className = "prestasi-filter-btn px-4 py-2 rounded-full text-[11px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap"; 
+            });
+            btn.className = "prestasi-filter-btn px-4 py-2 rounded-full text-[11px] font-bold bg-white text-yellow-600 shadow-sm transition-all border border-yellow-200 scale-105 whitespace-nowrap";
+            
+            const listContainer = document.getElementById('prestasi-list-container');
+            const podiumContainer = document.getElementById('prestasi-podium-container');
+            if(!listContainer) return;
+
+            const filtered = catFilter === 'Semua' ? MOCK_PRESTASI : MOCK_PRESTASI.filter(i => i.cat === catFilter);
+            
+            if (filtered.length > 0 && catFilter === 'Semua') {
+                const top1 = filtered[0];
+                podiumContainer.innerHTML = `
+                <div class="glass-card p-6 md:p-8 border border-white/80 shadow-md relative overflow-hidden bg-gradient-to-br from-yellow-50/50 to-white/40 flex flex-col md:flex-row gap-6 items-center cursor-pointer hover:shadow-lg transition-all" onclick="navigate('#/berita/detail')">
+                    <div class="absolute right-[-50px] bottom-[-50px] w-64 h-64 bg-yellow-400/20 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="w-full md:w-[60%] z-10 relative">
+                        <div class="flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-600 rounded-full text-[10px] font-black uppercase tracking-wider border border-yellow-200 shadow-sm w-max mb-4">
+                            <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i> Prestasi Puncak
+                        </div>
+                        <h2 class="text-[26px] md:text-[32px] font-black text-brand-navy leading-tight mb-2">${top1.title}</h2>
+                        <p class="text-[13px] md:text-[15px] text-text-secondary font-medium mb-6">${top1.name} · ${top1.date}</p>
+                        <button class="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white font-bold text-[12px] px-6 py-3 rounded-[12px] shadow-lg shadow-yellow-500/30 flex items-center gap-2 hover:scale-105 transition-transform w-max">Beri Selamat <i data-lucide="heart" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="w-full md:w-[40%] flex justify-center z-10 relative">
+                        <div class="relative w-40 h-40 flex items-center justify-center">
+                            <div class="absolute inset-0 bg-gradient-to-br ${top1.glow} rounded-full blur-xl opacity-60"></div>
+                            <span class="text-[100px] filter drop-shadow-xl z-10 transform hover:scale-110 hover:rotate-6 transition-transform cursor-pointer">${top1.medal}</span>
+                        </div>
+                    </div>
+                </div>`;
+            } else {
+                podiumContainer.innerHTML = '';
+            }
+
+            const listItems = catFilter === 'Semua' ? filtered.slice(1) : filtered;
+            listContainer.innerHTML = listItems.map(item => `
+                <div class="masonry-item glass-card p-5 border border-white/80 shadow-sm bg-white/40 hover:bg-white transition-all cursor-pointer group flex flex-col items-center text-center">
+                    <div class="relative w-20 h-20 mb-3 flex items-center justify-center">
+                        <div class="absolute inset-0 bg-gradient-to-br ${item.glow} rounded-full blur-md opacity-40 group-hover:opacity-60 transition-opacity"></div>
+                        <span class="text-[48px] filter drop-shadow-md z-10 group-hover:scale-110 transition-transform">${item.medal}</span>
+                    </div>
+                    <span class="text-[9px] font-black text-brand-blue bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wider mb-2 border border-blue-100">${item.cat}</span>
+                    <h4 class="font-extrabold text-[15px] text-brand-navy leading-tight mb-1">${item.title}</h4>
+                    <p class="text-[11px] text-text-secondary font-medium">${item.name}</p>
+                    <p class="text-[9px] text-gray-400 mt-2">${item.date}</p>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // --- RENDER BULETIN, ARTIKEL, EMAGAZINE ---
+        function renderOtherPages() {
+            const bC = document.getElementById('buletin-board-container');
+            const aC = document.getElementById('artikel-masonry-container');
+            const eC = document.getElementById('emagazine-shelf-container');
+
+            if(bC) {
+                bC.innerHTML = MOCK_BULETIN.map(item => `
+                    <div class="glass-card p-6 border border-white/80 shadow-md ${item.urgency === 'Tinggi' ? 'bg-gradient-to-br from-red-50/50 to-orange-50/50' : 'bg-gradient-to-br from-blue-50/50 to-white/50'} relative cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all flex flex-col">
+                        <i data-lucide="pin" class="absolute top-4 right-4 w-6 h-6 ${item.urgency === 'Tinggi' ? 'text-red-500' : 'text-blue-500'} transform rotate-12 drop-shadow-sm"></i>
+                        <div class="flex items-center gap-2 mb-3"><span class="w-2.5 h-2.5 rounded-full ${item.color.split(' ')[1].replace('text-', 'bg-')} shadow-sm"></span> <span class="text-[10px] font-black ${item.color.split(' ')[1]} uppercase tracking-wider bg-white/60 px-2 py-0.5 rounded border border-white shadow-sm">${item.urgency}</span></div>
+                        <h3 class="font-black text-[18px] text-brand-navy leading-snug mb-3 pr-6">${item.title}</h3>
+                        <p class="text-[11px] text-text-secondary font-medium flex items-center gap-1.5 mt-auto pt-4 border-t border-black/5"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> Diterbitkan: ${item.date}</p>
+                    </div>
+                `).join('');
+            }
+            if(aC) {
+                aC.innerHTML = MOCK_ARTIKEL.map(item => `
+                    <div class="masonry-item glass-card p-5 border border-white/80 shadow-sm bg-gradient-to-br from-white/60 to-purple-50/30 cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all">
+                        <img src="${item.img}" class="w-full h-[120px] rounded-[12px] object-cover mb-4 border border-white/50 shadow-sm">
+                        <span class="text-[10px] font-black text-purple-600 bg-purple-100 px-2 py-1 rounded-md uppercase tracking-wider mb-2 inline-block border border-purple-200 shadow-sm">${item.type}</span>
+                        <h3 class="font-extrabold text-[16px] text-brand-navy leading-tight mb-2 font-serif">"${item.title}"</h3>
+                        <p class="text-[12px] text-gray-600 italic leading-relaxed mb-4 border-l-2 border-purple-300 pl-3">... ${item.excerpt} ...</p>
+                        <div class="flex items-center gap-2 pt-3 border-t border-black/5">
+                            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-purple-400 to-blue-400 flex items-center justify-center text-white font-bold text-[10px] shadow-sm">${item.author.charAt(0)}</div>
+                            <span class="text-[11px] font-bold text-brand-navy">${item.author}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            if(eC) {
+                eC.innerHTML = MOCK_EMAGAZINE.map(item => `
+                    <div class="flex flex-col items-center group cursor-pointer">
+                        <div class="book-cover w-[140px] md:w-[180px] h-[200px] md:h-[260px] relative mb-4">
+                            <img src="${item.cover}" class="w-full h-full object-cover">
+                            <div class="absolute top-2 left-2 bg-brand-blue text-white px-2 py-0.5 rounded text-[8px] font-bold shadow-sm z-10 transform -rotate-12 origin-left">PDF</div>
+                        </div>
+                        <div class="text-center w-full px-2">
+                            <span class="text-[10px] font-black text-brand-orange uppercase tracking-wider mb-1 block">${item.ed}</span>
+                            <h4 class="font-extrabold text-[14px] text-brand-navy leading-tight line-clamp-2">${item.title}</h4>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- REALTIME ADMIN ENGINE & TABS ---
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`adm-tab-${tabName}`).classList.remove('hidden');
+
+            ['berita', 'layout', 'agenda', 'prestasi'].forEach(t => {
+                const btn = document.getElementById(`btn-adm-${t}`);
+                if(!btn) return;
+                if(t === tabName) {
+                    btn.className = "px-5 py-2.5 rounded-full text-[12px] font-bold bg-brand-blue text-white shadow-md transition-all whitespace-nowrap";
+                } else {
+                    btn.className = "px-5 py-2.5 rounded-full text-[12px] font-semibold glass text-text-secondary transition-all border border-white whitespace-nowrap";
+                }
+            });
+        }
+
+        // --- LAYOUT BUILDER LOGIC ---
+        function renderAdminLayoutBuilder() {
+            const container = document.getElementById('adm-layout-builder-list');
+            if(!container) return;
+            container.innerHTML = NEWS_LAYOUT.map((block, idx) => `
+                <div class="glass p-4 rounded-[14px] flex items-center justify-between border border-white shadow-sm hover:shadow-md transition-shadow bg-white/40">
+                    <div class="flex items-center gap-4">
+                        <div class="flex flex-col gap-1">
+                            <button onclick="moveLayout(${idx}, -1)" class="text-gray-400 hover:text-brand-blue ${idx === 0 ? 'invisible' : ''}"><i data-lucide="chevron-up" class="w-5 h-5"></i></button>
+                            <button onclick="moveLayout(${idx}, 1)" class="text-gray-400 hover:text-brand-blue ${idx === NEWS_LAYOUT.length - 1 ? 'invisible' : ''}"><i data-lucide="chevron-down" class="w-5 h-5"></i></button>
+                        </div>
+                        <div>
+                            <h4 class="font-extrabold text-[14px] text-brand-navy leading-tight">${block.name}</h4>
+                            <span class="text-[10px] font-bold text-brand-orange uppercase">Posisi ke-${idx + 1}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex flex-col text-right">
+                            <span class="text-[10px] font-bold text-text-secondary mb-1">Ukuran (Desktop):</span>
+                            <select onchange="changeLayoutSize(${idx}, this.value)" class="bg-white/80 border border-white px-3 py-1.5 rounded-[8px] text-[12px] font-bold text-brand-navy outline-none shadow-sm cursor-pointer">
+                                <option value="full" ${block.size === 'full' ? 'selected' : ''}>Penuh (100%)</option>
+                                <option value="half" ${block.size === 'half' ? 'selected' : ''}>Setengah (50%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function moveLayout(idx, dir) {
+            if(idx + dir < 0 || idx + dir >= NEWS_LAYOUT.length) return;
+            const temp = NEWS_LAYOUT[idx];
+            NEWS_LAYOUT[idx] = NEWS_LAYOUT[idx + dir];
+            NEWS_LAYOUT[idx + dir] = temp;
+            renderAdminLayoutBuilder();
+        }
+
+        function changeLayoutSize(idx, newSize) {
+            NEWS_LAYOUT[idx].size = newSize;
+        }
+
+        function applyNewsLayout() {
+            filterNews('Semua', document.querySelector('.news-filter-btn.active-semua') || document.querySelector('.news-filter-btn'));
+            showToast("Tata letak halaman berita berhasil diperbarui!");
+            navigate('#/berita');
+        }
+
+        function updateAdminStatsAndTables() {
+            document.getElementById('stat-total-berita').innerText = MOCK_NEWS.length;
+            document.getElementById('stat-total-agenda').innerText = MOCK_AGENDA.length;
+            document.getElementById('stat-total-prestasi').innerText = MOCK_PRESTASI.length;
+
+            const nList = document.getElementById('adm-news-table-list');
+            if(nList) {
+                nList.innerHTML = MOCK_NEWS.map(n => `
+                    <div class="glass p-3 rounded-[12px] flex items-center justify-between border border-white hover:bg-white/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <img src="${n.img}" class="w-10 h-10 rounded-[8px] object-cover border border-white/50">
+                            <div>
+                                <h5 class="font-bold text-[12px] text-brand-navy line-clamp-1 w-[120px] md:w-[150px]">${n.title}</h5>
+                                <span class="text-[9px] text-text-secondary">${n.cat} • ${n.date}</span>
+                            </div>
+                        </div>
+                        <button onclick="deleteNews(${n.id})" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 hover:text-red-600 border border-red-100 transition-colors shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            const aList = document.getElementById('adm-agenda-table-list');
+            if(aList) {
+                aList.innerHTML = MOCK_AGENDA.map(a => `
+                    <div class="glass p-3 rounded-[12px] flex items-center justify-between border border-white hover:bg-white/50 transition-colors">
+                        <div>
+                            <h5 class="font-bold text-[12px] text-brand-navy">${a.title}</h5>
+                            <span class="text-[9px] text-text-secondary">Tgl ${a.id} Okt • ${a.time} (${a.loc})</span>
+                        </div>
+                        <button onclick="deleteAgenda(${a.id})" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 hover:text-red-600 border border-red-100 transition-colors shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                `).join('');
+            }
+
+            const pList = document.getElementById('adm-prestasi-table-list');
+            if(pList) {
+                pList.innerHTML = MOCK_PRESTASI.map(p => `
+                    <div class="glass p-3 rounded-[12px] flex items-center justify-between border border-white hover:bg-white/50 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="text-2xl">${p.medal}</span>
+                            <div>
+                                <h5 class="font-bold text-[12px] text-brand-navy">${p.title}</h5>
+                                <span class="text-[9px] text-text-secondary">${p.name} • ${p.cat}</span>
+                            </div>
+                        </div>
+                        <button onclick="deletePrestasi(${p.id})" class="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100 hover:text-red-600 border border-red-100 transition-colors shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // === REALTIME FORM HANDLERS & IMAGE CROP/RESIZE LOGIC ===
+        
+        let currentThumbnailBase64 = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80";
+        let currentEditingImage = null;
+        let cropper = null;
+
+        // Cover Thumbnail Preview
+        function previewThumbnail(event, containerId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentThumbnailBase64 = e.target.result;
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = `
+                        <img src="${currentThumbnailBase64}" class="w-full h-full object-cover rounded-[12px] absolute inset-0 z-0 border border-white/50">
+                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity z-10 rounded-[12px]">
+                            <span class="text-white font-bold text-[12px] bg-black/50 px-3 py-1.5 rounded-full backdrop-blur-sm"><i data-lucide="edit-2" class="w-4 h-4 inline mr-1"></i> Ganti Foto</span>
+                        </div>
+                    `;
+                    lucide.createIcons();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Rich Text Editor Commands
+        function formatDoc(cmd, value=null) {
+            document.execCommand(cmd, false, value);
+            document.getElementById('adm-news-content').focus();
+        }
+
+        function addLink() {
+            const url = prompt('Masukkan tautan URL lengkap (contoh: https://google.com):');
+            if(url) formatDoc('createLink', url);
+        }
+
+        function insertInlineImage(event) {
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    formatDoc('insertImage', e.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+            event.target.value = ''; // Reset
+        }
+
+        // Editor Image Click (To Open Crop/Resize Modal)
+        document.getElementById('adm-news-content').addEventListener('click', function(e) {
+            if (e.target.tagName === 'IMG') {
+                openCropModal(e.target);
+            }
+        });
+
+        function openCropModal(imgElement) {
+            currentEditingImage = imgElement;
+            const modal = document.getElementById('image-crop-modal');
+            const targetImg = document.getElementById('crop-image-target');
+            const widthInput = document.getElementById('resize-width-input');
+            
+            targetImg.src = imgElement.src;
+            widthInput.value = imgElement.width || imgElement.naturalWidth;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Wait for modal fade before initializing Cropper to prevent sizing issues
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                if(cropper) cropper.destroy();
+                cropper = new Cropper(targetImg, {
+                    viewMode: 2,
+                    dragMode: 'move',
+                    background: false,
+                    autoCropArea: 1,
+                });
+            }, 50);
+        }
+
+        function closeCropModal() {
+            const modal = document.getElementById('image-crop-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                if(cropper) { cropper.destroy(); cropper = null; }
+                currentEditingImage = null;
+            }, 300);
+        }
+
+        function setCropRatio(ratio) {
+            if(cropper) cropper.setAspectRatio(ratio);
+        }
+
+        function applyCropAndResize() {
+            if(!cropper || !currentEditingImage) return;
+            
+            const widthInput = document.getElementById('resize-width-input').value;
+            const targetWidth = widthInput ? parseInt(widthInput) : null;
+            
+            const canvasOptions = targetWidth ? { width: targetWidth } : {};
+            const canvas = cropper.getCroppedCanvas(canvasOptions);
+            
+            if(canvas) {
+                const newImgData = canvas.toDataURL('image/jpeg', 0.9);
+                currentEditingImage.src = newImgData;
+                if(targetWidth) currentEditingImage.style.width = targetWidth + 'px';
+                showToast("Gambar berhasil dipotong dan disesuaikan!");
+            }
+            
+            closeCropModal();
+        }
+
+        // Submit News
+        function handleAddNewNews(e) {
+            e.preventDefault();
+            const title = document.getElementById('adm-news-title').value;
+            const author = document.getElementById('adm-news-author').value;
+            const cat = document.getElementById('adm-news-cat').value;
+            
+            const contentDiv = document.getElementById('adm-news-content');
+            let rawText = contentDiv.innerText || "";
+            // Remove "💡 Tip:..." from excerpt if accidentally left
+            rawText = rawText.replace(/💡 Tip:.*/g, '').trim(); 
+            const excerpt = rawText.length > 100 ? rawText.substring(0, 100) + "..." : (rawText || "Liputan sekolah terbaru.");
+            const fullHtml = contentDiv.innerHTML;
+
+            const newObj = {
+                id: Date.now(),
+                title: title,
+                cat: cat,
+                author: author,
+                date: "Baru saja",
+                excerpt: excerpt,
+                content_html: fullHtml,
+                img: currentThumbnailBase64,
+                color: "text-brand-blue", bg: "bg-blue-50", bd: "border-blue-200"
+            };
+
+            MOCK_NEWS.unshift(newObj);
+            
+            document.getElementById('form-add-berita').reset();
+            contentDiv.innerHTML = "";
+            currentThumbnailBase64 = "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&q=80";
+            document.getElementById('preview-thumb-container').innerHTML = `
+                <div class="flex flex-col items-center pointer-events-none">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-brand-blue mb-2 shadow-sm border border-blue-100">
+                        <i data-lucide="image-plus" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-[12px] font-bold text-brand-navy">Pilih Gambar atau Tarik ke Sini</span>
+                    <span class="text-[10px] text-text-secondary mt-0.5">Maksimum 2MB (JPG, PNG)</span>
+                </div>
+            `;
+            lucide.createIcons();
+
+            renderHomeDynamic();
+            filterNews('Semua', document.querySelector('.news-filter-btn.active-semua'));
+            updateAdminStatsAndTables();
+            showToast("Berita berhasil diterbitkan!");
+        }
+
+        function deleteNews(id) {
+            MOCK_NEWS = MOCK_NEWS.filter(n => n.id !== id);
+            renderHomeDynamic();
+            filterNews('Semua', document.querySelector('.news-filter-btn.active-semua'));
+            updateAdminStatsAndTables();
+            showToast("Berita berhasil dihapus!");
+        }
+
+        function handleAddNewAgenda(e) {
+            e.preventDefault();
+            const title = document.getElementById('adm-agenda-title').value;
+            const date = parseInt(document.getElementById('adm-agenda-date').value);
+            const time = document.getElementById('adm-agenda-time').value;
+            const loc = document.getElementById('adm-agenda-loc').value;
+
+            MOCK_AGENDA.unshift({ id: date, title: title, time: time, loc: loc, color: "text-brand-blue", bg: "bg-blue-50/50", bd: "border-blue-200" });
+            
+            document.getElementById('form-add-agenda').reset();
+            document.getElementById('preview-agenda-poster').innerHTML = `
+                <div class="flex flex-col items-center pointer-events-none">
+                    <div class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-brand-orange mb-2 shadow-sm border border-orange-100"><i data-lucide="image-plus" class="w-5 h-5"></i></div>
+                    <span class="text-[12px] font-bold text-brand-navy">Upload Poster / Brosur</span>
+                </div>`;
+            lucide.createIcons();
+
+            renderHomeDynamic();
+            renderAgendaList();
+            updateAdminStatsAndTables();
+            showToast("Agenda baru berhasil disimpan!");
+        }
+
+        function deleteAgenda(id) {
+            MOCK_AGENDA = MOCK_AGENDA.filter(a => a.id !== id);
+            renderHomeDynamic();
+            renderAgendaList();
+            updateAdminStatsAndTables();
+            showToast("Agenda berhasil dihapus!");
+        }
+
+        function handleAddNewPrestasi(e) {
+            e.preventDefault();
+            const title = document.getElementById('adm-pres-title').value;
+            const name = document.getElementById('adm-pres-name').value;
+            const cat = document.getElementById('adm-pres-cat').value;
+            const medal = document.getElementById('adm-pres-medal').value;
+
+            MOCK_PRESTASI.unshift({ id: Date.now(), title: title, name: name, cat: cat, date: "Baru saja", medal: medal, glow: "from-yellow-200 to-yellow-400" });
+            
+            document.getElementById('form-add-prestasi').reset();
+            document.getElementById('preview-prestasi-foto').innerHTML = `
+                <div class="flex flex-col items-center pointer-events-none">
+                    <div class="w-10 h-10 rounded-full bg-yellow-50 flex items-center justify-center text-yellow-600 mb-2 shadow-sm border border-yellow-100"><i data-lucide="image-plus" class="w-5 h-5"></i></div>
+                    <span class="text-[12px] font-bold text-brand-navy">Upload Foto Momen Juara</span>
+                </div>`;
+            lucide.createIcons();
+
+            renderHomeDynamic();
+            filterPrestasi('Semua', document.querySelector('.prestasi-filter-btn'));
+            updateAdminStatsAndTables();
+            showToast("Hall of Fame berhasil diperbarui!");
+        }
+
+        function deletePrestasi(id) {
+            MOCK_PRESTASI = MOCK_PRESTASI.filter(p => p.id !== id);
+            renderHomeDynamic();
+            filterPrestasi('Semua', document.querySelector('.prestasi-filter-btn'));
+            updateAdminStatsAndTables();
+            showToast("Prestasi berhasil dihapus!");
+        }
+
+        // --- ROUTING ---
+        function navigate(hash) { window.location.hash = hash; }
+        function handleRoute() {
+            const hash = window.location.hash || '#/';
+            document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+            let targetId = 'page-home';
+            if (hash === '#/berita') targetId = 'page-berita';
+            else if (hash.startsWith('#/berita/detail')) targetId = 'page-berita-detail';
+            else if (hash === '#/agenda') targetId = 'page-agenda';
+            else if (hash === '#/prestasi') targetId = 'page-prestasi';
+            else if (hash === '#/buletin') targetId = 'page-buletin';
+            else if (hash === '#/artikel') targetId = 'page-artikel';
+            else if (hash === '#/emagazine') targetId = 'page-emagazine';
+            else if (hash === '#/admin') targetId = 'page-admin';
+
+            const targetEl = document.getElementById(targetId);
+            if(targetEl) targetEl.classList.add('active');
+
+            document.querySelectorAll('.mob-nav-btn, .desk-nav').forEach(btn => {
+                const target = btn.getAttribute('data-target');
+                btn.classList.remove('active');
+                if (target === '#/' && hash === '#/') btn.classList.add('active');
+                else if (target !== '#/' && hash.startsWith(target)) btn.classList.add('active');
+            });
+
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            closeAllSheets();
+            lucide.createIcons();
+            
+            if(targetId === 'page-admin') {
+                updateAdminStatsAndTables();
+            }
+        }
+
+        function toggleSheetNear(id) {
+            document.getElementById('overlay-sheets').classList.add('open');
+            document.getElementById(id).classList.add('open');
+        }
+        function closeAllSheets() {
+            const overlay = document.getElementById('overlay-sheets');
+            if(overlay) overlay.classList.remove('open');
+            document.querySelectorAll('.bottom-sheet').forEach(s => s.classList.remove('open'));
+            const picker = document.getElementById('month-picker-popup');
+            if(picker) picker.classList.add('hidden');
+        }
+
+        function initCalendarGrid() {
+            const grid = document.getElementById('agenda-calendar-grid');
+            if(!grid) return;
+            let html = '<span class="text-text-secondary font-medium text-[10px] mb-2">Min</span><span class="text-text-secondary font-medium text-[10px] mb-2">Sen</span><span class="text-text-secondary font-medium text-[10px] mb-2">Sel</span><span class="text-text-secondary font-medium text-[10px] mb-2">Rab</span><span class="text-text-secondary font-medium text-[10px] mb-2">Kam</span><span class="text-text-secondary font-medium text-[10px] mb-2">Jum</span><span class="text-text-secondary font-medium text-[10px] mb-2">Sab</span>';
+            for(let i=1; i<=30; i++) {
+                const isEvent = MOCK_AGENDA.some(a => a.id === i);
+                const isActive = i === 14;
+                if(isActive) {
+                    html += `<span class="bg-brand-blue text-white rounded-full w-8 h-8 flex items-center justify-center font-bold shadow-md mx-auto relative cursor-pointer hover:scale-110 transition-transform">${i}</span>`;
+                } else if(isEvent) {
+                    html += `<span class="text-text-primary p-1.5 font-bold relative cursor-pointer hover:bg-white rounded-full transition-colors">${i}<span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-brand-orange shadow-sm"></span></span>`;
+                } else {
+                    html += `<span class="text-text-secondary p-1.5 font-medium hover:bg-white rounded-full cursor-pointer transition-colors">${i}</span>`;
+                }
+            }
+            grid.innerHTML = html;
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            const timeEl = document.getElementById('live-time');
+            if(timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+        }, 1000);
+
+        window.addEventListener('hashchange', handleRoute);
+        window.addEventListener('DOMContentLoaded', () => {
+            handleRoute();
+            checkAdminAccess();
+            
+            renderHomeDynamic();
+            renderOtherPages();
+            renderAdminLayoutBuilder();
+            updateAdminStatsAndTables();
+            
+            const defaultNewsBtn = document.querySelector('#page-berita .news-filter-btn');
+            if(defaultNewsBtn) filterNews('Semua', defaultNewsBtn);
+            renderAgendaList();
+            initCalendarGrid();
+            filterPrestasi('Semua', document.querySelector('.prestasi-filter-btn'));
+        });
+    </script>
+</body>
+</html>
