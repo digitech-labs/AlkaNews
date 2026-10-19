@@ -149,7 +149,7 @@
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2.5">
                     <div class="w-10 h-10 rounded-2xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg></div>
-                    <div><h4 class="font-black text-[16px] text-[#12325B]">1 Tabel Terpadu (`alkanews`) + Pemisah Kelompok</h4><p class="text-[11px] text-[#7486A0] font-semibold">Tabel Supabase dengan Kolom Pembatas Berwarna</p></div>
+                    <div><h4 class="font-black text-[16px] text-[#12325B]">1 Sheet / Tabel Terpadu (`alkanews`) + Pemisah Kelompok</h4><p class="text-[11px] text-[#7486A0] font-semibold">Tabel Kolom Berdampingan dengan Jeda Pembatas Kosong</p></div>
                 </div>
                 <button type="button" onclick="closeSupabaseModal()" class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             </div>
@@ -191,7 +191,6 @@
         </div>
     </div>
 
-    <!-- SIDEBAR KIRI -->
     <aside class="w-[245px] shrink-0 glass-sidebar flex flex-col justify-between p-5 sticky top-0 h-screen z-40 select-none">
         <div id="public-sidebar-nav" class="flex flex-col h-full justify-between">
             <div>
@@ -215,7 +214,7 @@
                     </nav>
                 </div>
             </div>
-            <div class="pt-4 border-t border-slate-200/60">
+            <div id="admin-trigger-container" class="pt-4 border-t border-slate-200/60 hidden">
                 <button type="button" onclick="openAdminConsole()" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-rose-500 hover:bg-rose-50/90 font-extrabold text-[12.5px] transition-all">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
                     <span>Portal Admin CMS</span>
@@ -248,7 +247,6 @@
         </div>
     </aside>
 
-    <!-- KONTEN UTAMA -->
     <main class="flex-1 p-6 sm:p-10 max-w-[1380px] mx-auto w-full">
 
         <!-- HALAMAN 1: DASHBOARD -->
@@ -392,7 +390,7 @@
                 <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-blue-50 text-[#0878F9] flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/></svg></div><div id="stat-total-berita" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">TOTAL BERITA</div></div>
                 <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-orange-50 text-[#FF7A1A] flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div><div id="stat-total-agenda" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">AGENDA AKTIF</div></div>
                 <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg></div><div id="stat-total-prestasi" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">TOTAL PRESTASI</div></div>
-                <div onclick="openSupabaseModal()" class="glass-card p-5 text-center cursor-pointer hover:border-emerald-300 transition-all"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div><div id="stat-cloud-status" class="font-black text-[18px] text-emerald-600">Connected</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">1 TABEL TERPADU</div></div>
+                <div onclick="openSupabaseModal()" class="glass-card p-5 text-center cursor-pointer hover:border-emerald-300 transition-all"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div><div id="stat-cloud-status" class="font-black text-[18px] text-emerald-600">Connected</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">1 SHEET `alkanews`</div></div>
             </div>
 
             <!-- ADMIN TAB 1: KELOLA BERITA -->
@@ -637,6 +635,54 @@
         let currentCalMonth = 9;
         let currentCalYear = 2026;
         let selectedCalDay = 14;
+
+        // ==========================================
+        // 1. MASTER SSO INTEGRATION (MY ALKA PORTAL)
+        // ==========================================
+        function checkMasterAlkaPermission() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const alkaIsAdmin = urlParams.get('alka_is_admin') === '1';
+            const rawRole = urlParams.get('alka_role') || urlParams.get('role') || 'tamu';
+            const normalizedRole = rawRole.toLowerCase().replace(/[\s_-]+/g, '');
+
+            const isAdmin = (
+                alkaIsAdmin ||
+                normalizedRole === 'admin' ||
+                normalizedRole === 'administrator' ||
+                normalizedRole === 'superadmin'
+            );
+
+            const adminTrigger = document.getElementById('admin-trigger-container');
+            if (adminTrigger) {
+                if (isAdmin) {
+                    adminTrigger.classList.remove('hidden');
+                } else {
+                    adminTrigger.classList.add('hidden');
+                    if (typeof closeAdminConsole === 'function') {
+                        closeAdminConsole();
+                    }
+                }
+            }
+            return isAdmin;
+        }
+
+        window.addEventListener('message', (event) => {
+            if (!event.data) return;
+            if (event.data.type === 'ALKA_SSO_AUTH' || event.data.role !== undefined || event.data.alka_role !== undefined) {
+                const isSuperAdmin = event.data.isAdmin === true || event.data.alka_is_admin === true;
+                const role = String(event.data.alka_role || event.data.role || 'tamu').toLowerCase().replace(/[\s_-]+/g, '');
+                
+                const adminTrigger = document.getElementById('admin-trigger-container');
+                if (adminTrigger) {
+                    if (isSuperAdmin || role === 'admin' || role === 'superadmin') {
+                        adminTrigger.classList.remove('hidden');
+                    } else {
+                        adminTrigger.classList.add('hidden');
+                        if (typeof closeAdminConsole === 'function') closeAdminConsole();
+                    }
+                }
+            }
+        });
 
         function createInitialCloudSeed() {
             const imgs = [
@@ -1752,6 +1798,10 @@
             lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         function openAdminConsole() {
+            if (!checkMasterAlkaPermission()) {
+                showToast('Akses ditolak: Anda bukan administrator My Alka.');
+                return;
+            }
             document.getElementById('public-sidebar-nav').classList.add('hidden');
             const adm = document.getElementById('admin-sidebar-nav'); adm.classList.remove('hidden'); adm.classList.add('flex');
             document.querySelectorAll('.public-page').forEach(s => s.classList.add('hidden'));
@@ -1775,13 +1825,13 @@
         function closeSupabaseModal() { document.getElementById('supabase-modal').classList.add('hidden'); document.getElementById('supabase-modal').classList.remove('flex'); }
 
         function copySupabaseSQL() {
-            const sql = `-- TABEL 1 TERPADU ALKANEWS DENGAN KOLOM PEMISAH & KOMENTAR KELOMPOK
+            const sql = `-- TABEL 1 TERPADU ALKANEWS DENGAN KOLOM PEMISAH KOSONG & KOMENTAR KELOMPOK
 drop table if exists public.alkanews;
 
 create table public.alkanews (
   no_baris integer primary key,
 
-  -- KELOMPOK 1: BERITA (BIRU)
+  -- KELOMPOK 1: BERITA
   berita_judul text,
   berita_penulis text,
   berita_kategori text,
@@ -1789,42 +1839,42 @@ create table public.alkanews (
   berita_ringkasan text,
   berita_isi text,
   berita_gambar text,
-  pemisah_1 text default '---',
+  pemisah_1 text default null,
 
-  -- KELOMPOK 2: AGENDA (ORANYE)
+  -- KELOMPOK 2: AGENDA
   agenda_kegiatan text,
   agenda_tanggal text,
   agenda_bulan text,
   agenda_waktu text,
   agenda_lokasi text,
-  pemisah_2 text default '---',
+  pemisah_2 text default null,
 
-  -- KELOMPOK 3: PRESTASI / HOF (EMAS/KUNING)
+  -- KELOMPOK 3: PRESTASI / HOF
   prestasi_kejuaraan text,
   prestasi_nama_siswa text,
   prestasi_kategori text,
   prestasi_medali text,
   prestasi_tanggal text,
-  pemisah_3 text default '---',
+  pemisah_3 text default null,
 
-  -- KELOMPOK 4: PAPAN EDARAN (MERAH/ROSE)
+  -- KELOMPOK 4: PAPAN EDARAN
   edaran_judul text,
   edaran_prioritas text,
   edaran_tanggal text,
   edaran_isi text,
   edaran_lampiran text,
-  pemisah_4 text default '---',
+  pemisah_4 text default null,
 
-  -- KELOMPOK 5: KARYA SISWA (UNGU)
+  -- KELOMPOK 5: KARYA SISWA
   karya_judul text,
   karya_nama_siswa text,
   karya_jenis text,
   karya_kutipan text,
   karya_isi text,
   karya_gambar text,
-  pemisah_5 text default '---',
+  pemisah_5 text default null,
 
-  -- KELOMPOK 6: E-MAGAZINE (BIRU MUDA)
+  -- KELOMPOK 6: E-MAGAZINE
   emag_judul text,
   emag_edisi text,
   emag_label text,
@@ -1836,14 +1886,14 @@ create table public.alkanews (
   updated_at timestamptz default now()
 );
 
--- KOMENTAR KELOMPOK UNTUK DESKRIPSI DI SUPABASE TABLE INSPECTOR
+-- KOMENTAR KELOMPOK SUPABASE INSPECTOR
 comment on table public.alkanews is 'Tabel Terpadu AlkaNews (Berita, Agenda, Prestasi, Edaran, Karya, E-Mag dengan Pemisah)';
-comment on column public.alkanews.berita_judul is '[KELOMPOK BERITA] Judul liputan';
-comment on column public.alkanews.agenda_kegiatan is '[KELOMPOK AGENDA] Nama kegiatan sekolah';
-comment on column public.alkanews.prestasi_kejuaraan is '[KELOMPOK PRESTASI] Hall of fame siswa';
-comment on column public.alkanews.edaran_judul is '[KELOMPOK EDARAN] Papan pengumuman';
-comment on column public.alkanews.karya_judul is '[KELOMPOK KARYA] Literasi siswa';
-comment on column public.alkanews.emag_judul is '[KELOMPOK EMAG] Majalah digital';
+comment on column public.alkanews.berita_judul is '[BERITA] Judul liputan';
+comment on column public.alkanews.agenda_kegiatan is '[AGENDA] Nama kegiatan sekolah';
+comment on column public.alkanews.prestasi_kejuaraan is '[PRESTASI] Hall of fame siswa';
+comment on column public.alkanews.edaran_judul is '[EDARAN] Papan pengumuman';
+comment on column public.alkanews.karya_judul is '[KARYA] Literasi siswa';
+comment on column public.alkanews.emag_judul is '[EMAG] Majalah digital';
 
 alter table public.alkanews disable row level security;
 grant all on table public.alkanews to anon, authenticated, service_role;`;
@@ -1871,6 +1921,17 @@ grant all on table public.alkanews to anon, authenticated, service_role;`;
 
         window.addEventListener('DOMContentLoaded', () => {
             updateClock(); setInterval(updateClock, 30000);
+            
+            // 1. Eksekusi pengecekan hak akses SSO Master My Alka saat pertama kali dimuat
+            checkMasterAlkaPermission();
+
+            // 2. Meminta sinyal autentikasi aktif ke induk My Alka jika dimuat dalam iframe
+            if (window.parent && window.parent !== window) {
+                try {
+                    window.parent.postMessage({ type: 'ALKA_REQUEST_SSO' }, '*');
+                } catch (e) {}
+            }
+
             ensureMemorySeedIfEmpty();
             populateDynamicCategorySelects();
             initAllModernSelects();
