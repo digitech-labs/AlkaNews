@@ -2,43 +2,169 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AlkaNews - Portal Berita & Majalah Digital Sekolah</title>
+    
+    <!-- Tailwind CSS & Lucide Icons & Supabase & CropperJS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        macos: {
+                            red: '#FF5F56',
+                            yellow: '#FFBD2E',
+                            green: '#27C93F',
+                            blue: '#0878F9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        * { font-family: 'Plus Jakarta Sans', sans-serif; box-sizing: border-box; }
-        body { background: radial-gradient(circle at 12% 10%, #FFF5EE 0%, #F2F7FF 48%, #E6F0FA 100%); color: #12325B; min-height: 100vh; overflow-x: hidden; }
-        .glass-sidebar { background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-right: 1px solid rgba(255, 255, 255, 0.9); }
-        .glass-card { background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 12px 32px -8px rgba(18, 50, 91, 0.05); }
-        .glass-input { background: rgba(248, 250, 252, 0.9); border: 1px solid rgba(226, 232, 240, 0.95); border-radius: 14px; transition: all 0.2s ease; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #c7d8ff 0%, #e0e7ff 38%, #f1f5f9 72%, #ddd6fe 100%);
+            color: #12325B;
+        }
+
+        /* Ambient Mesh Orbs */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 9999px;
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+            animation: floatOrb 18s infinite alternate ease-in-out;
+        }
+        .orb-1 { top: -12%; left: -8%; width: 55vw; height: 55vw; background: rgba(147, 197, 253, 0.65); }
+        .orb-2 { bottom: -15%; right: -10%; width: 60vw; height: 60vw; background: rgba(196, 181, 253, 0.6); animation-delay: -6s; }
+        .orb-3 { top: 25%; right: 20%; width: 42vw; height: 42vw; background: rgba(253, 230, 138, 0.35); animation-delay: -11s; }
+        .orb-4 { bottom: 15%; left: 18%; width: 38vw; height: 38vw; background: rgba(165, 243, 252, 0.5); animation-delay: -4s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(35px, 25px) scale(1.08); }
+        }
+
+        .macos-window {
+            background: rgba(255, 255, 255, 0.62);
+            backdrop-filter: blur(45px) saturate(180%);
+            -webkit-backdrop-filter: blur(45px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 25px 70px -15px rgba(18, 50, 91, 0.15), 0 0 1px 1px rgba(255, 255, 255, 0.7) inset;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.76);
+            backdrop-filter: blur(28px) saturate(170%);
+            -webkit-backdrop-filter: blur(28px) saturate(170%);
+            border: 1px solid rgba(255, 255, 255, 0.92);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px -6px rgba(18, 50, 91, 0.06);
+            transition: all 0.2s ease;
+        }
+        .glass-card:hover {
+            box-shadow: 0 16px 36px -8px rgba(8, 120, 249, 0.09);
+        }
+        .glass-input {
+            background: rgba(248, 250, 252, 0.9);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            border-radius: 14px;
+            transition: all 0.2s ease;
+        }
         .glass-input:focus { background: #FFFFFF; border-color: #0878F9; box-shadow: 0 0 0 3px rgba(8, 120, 249, 0.12); }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 16px; border-radius: 16px; font-size: 13px; font-weight: 700; color: #5A6E8C; transition: all 0.2s ease; cursor: pointer; width: 100%; text-align: left; }
-        .nav-item:hover { color: #12325B; background: rgba(255, 255, 255, 0.65); }
-        .nav-item.active { background: #FFFFFF; color: #0878F9; box-shadow: 0 8px 20px -6px rgba(8, 120, 249, 0.18); }
-        .gold-card { background: linear-gradient(135deg, #FFFDF4 0%, #FDF6D8 55%, #FBF0C4 100%); border: 1px solid rgba(253, 224, 71, 0.6); border-radius: 24px; box-shadow: 0 14px 34px -8px rgba(234, 179, 8, 0.12); }
+        
+        .top-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #5A6E8C;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .top-nav-item:hover { color: #12325B; background: rgba(255, 255, 255, 0.65); }
+        .top-nav-item.active { background: #FFFFFF; color: #0878F9; box-shadow: 0 6px 16px -4px rgba(8, 120, 249, 0.18); }
+
+        .adobe-pastel-banner {
+            background: linear-gradient(120deg, #CBEFE3 0%, #E7F5CE 38%, #F3EAFE 74%, #DDD6FE 100%);
+            border: 1.5px solid rgba(255, 255, 255, 0.92);
+            border-radius: 24px;
+            box-shadow: 0 14px 34px -10px rgba(30, 64, 175, 0.08);
+        }
+        .mobile-focus-banner {
+            background: radial-gradient(circle at 82% 35%, #2563EB 0%, #0F172A 62%, #090D16 100%);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 24px;
+            box-shadow: 0 18px 38px -10px rgba(15, 23, 42, 0.35);
+        }
+        .installed-row {
+            background: rgba(255, 255, 255, 0.65);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            transition: all 0.18s ease;
+        }
+        .installed-row:last-child { border-bottom: none; }
+        .installed-row:hover { background: rgba(255, 255, 255, 0.95); }
+
+        @keyframes float3D { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-6px) rotate(4deg); } }
+        .float-3d { animation: float3D 4.5s ease-in-out infinite; }
+
+        .gold-card {
+            background: linear-gradient(135deg, #FFFDF4 0%, #FDF6D8 55%, #FBF0C4 100%);
+            border: 1px solid rgba(253, 224, 71, 0.6);
+            border-radius: 24px;
+            box-shadow: 0 14px 34px -8px rgba(234, 179, 8, 0.12);
+        }
+
         .cute-cal-popover { position: fixed; z-index: 220; width: 292px; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(24px); border: 1.5px solid #FFFFFF; border-radius: 24px; padding: 16px; box-shadow: 0 24px 60px -12px rgba(18, 50, 91, 0.22); display: none; animation: cutePopBounce 0.24s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
         .cute-cal-popover.open { display: block; }
         .cute-cal-day { width: 34px; height: 34px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 800; cursor: pointer; transition: all 0.15s ease; }
         .cute-cal-day:hover:not(.empty):not(.selected) { background: #EFF6FF; color: #0878F9; transform: scale(1.06); }
         .cute-cal-day.selected { background: linear-gradient(135deg, #0878F9, #3898FF); color: #FFFFFF; box-shadow: 0 6px 14px -3px rgba(8, 120, 249, 0.45); }
         .cute-cal-day.today:not(.selected) { background: #FFF7ED; color: #FF7A1A; border: 1.5px dashed #FDBA74; }
+
         .modern-select-popover { position: fixed; z-index: 215; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(24px); border: 1.5px solid #FFFFFF; border-radius: 18px; padding: 6px; box-shadow: 0 20px 50px -10px rgba(18, 50, 91, 0.2); display: none; max-height: 240px; overflow-y: auto; }
         .modern-select-popover.open { display: block; }
+
         @keyframes cutePopBounce { 0% { opacity: 0; transform: scale(0.86) translateY(10px); } 70% { opacity: 1; transform: scale(1.02) translateY(-2px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-        .cute-save-card { background: rgba(255, 255, 255, 0.82); backdrop-filter: blur(28px) saturate(190%); border: 1.5px solid rgba(255, 255, 255, 0.98); box-shadow: 0 24px 60px -12px rgba(8, 120, 249, 0.25); animation: cutePopBounce 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .cute-save-card { background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(28px) saturate(190%); border: 1.5px solid rgba(255, 255, 255, 0.98); box-shadow: 0 24px 60px -12px rgba(8, 120, 249, 0.25); animation: cutePopBounce 0.34s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        
         #adm-editor-content img { max-width: 100%; border-radius: 14px; margin: 8px 0; cursor: pointer; transition: outline 0.15s ease; }
         #adm-editor-content img.selected-editor-img { outline: 3px solid #0878F9; box-shadow: 0 8px 24px rgba(8, 120, 249, 0.25); }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.45); border-radius: 99px; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="flex min-h-screen selection:bg-blue-500 selection:text-white">
+<body class="h-screen w-full relative flex items-center justify-center p-0 md:p-3 lg:p-4 select-none">
+
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+    <div class="ambient-orb orb-4"></div>
 
     <div id="toast-notif" class="fixed top-[-100px] left-1/2 transform -translate-x-1/2 z-[250] rounded-full px-5 py-2.5 border border-white/90 shadow-[0_16px_40px_-8px_rgba(18,50,91,0.18)] transition-all duration-500 flex items-center gap-2.5 w-max max-w-[92%] bg-white/95 backdrop-blur-2xl">
         <div class="w-6 h-6 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-600 shrink-0">
@@ -143,13 +269,13 @@
         </div>
     </div>
 
-    <!-- SUPABASE DIAGNOSTIC & COLOR SETUP MODAL -->
+    <!-- SUPABASE MODAL (Eksklusif Admin) -->
     <div id="supabase-modal" class="fixed inset-0 z-[230] bg-[#12325B]/30 backdrop-blur-sm items-center justify-center p-4 hidden" onclick="closeSupabaseModal()">
         <div class="glass-card bg-white/95 p-6 w-full max-w-xl shadow-2xl border border-white max-h-[90vh] overflow-y-auto custom-scrollbar" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-2.5">
                     <div class="w-10 h-10 rounded-2xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg></div>
-                    <div><h4 class="font-black text-[16px] text-[#12325B]">1 Sheet / Tabel Terpadu (`alkanews`) + Pemisah Kelompok</h4><p class="text-[11px] text-[#7486A0] font-semibold">Tabel Kolom Berdampingan dengan Jeda Pembatas Kosong</p></div>
+                    <div><h4 class="font-black text-[16px] text-[#12325B]">1 Sheet / Tabel Terpadu (`alkanews`)</h4><p class="text-[11px] text-[#7486A0] font-semibold">Tabel Kolom Berdampingan dengan Jeda Pembatas Kosong</p></div>
                 </div>
                 <button type="button" onclick="closeSupabaseModal()" class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
             </div>
@@ -159,7 +285,7 @@
                     <span class="text-[11px] font-extrabold uppercase tracking-wider text-[#12325B]">Status Tabel di Supabase My Alka:</span>
                     <span id="supa-diag-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-700">Tabel alkanews & siswa Aktif</span>
                 </div>
-                <p id="supa-diag-msg" class="text-[11.5px] font-semibold text-[#5A6E8C] leading-relaxed">Terhubung ke Supabase! Tabel <b>alkanews</b> aktif dengan kolom Beranda, Agenda, Prestasi, Edaran, Karya, dan E-Mag.</p>
+                <p id="supa-diag-msg" class="text-[11.5px] font-semibold text-[#5A6E8C] leading-relaxed">Terhubung ke Supabase! Tabel <b>alkanews</b> aktif.</p>
                 <div id="supa-table-counts" class="grid grid-cols-3 sm:grid-cols-4 gap-1.5 pt-2">
                     <div class="p-2.5 rounded-xl bg-white border border-emerald-200 text-center"><div class="font-black text-[12.5px] text-emerald-600">Terhubung</div><div class="text-[9.5px] font-bold text-[#7486A0]">Tabel alkanews</div></div>
                     <div class="p-2.5 rounded-xl bg-white border border-emerald-200 text-center"><div class="font-black text-[12.5px] text-emerald-600">705 Siswa</div><div class="text-[9.5px] font-bold text-[#7486A0]">Tabel siswa</div></div>
@@ -168,20 +294,10 @@
                 </div>
             </div>
 
-            <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-200/70 mb-4 text-[11.5px] text-[#12325B] space-y-1">
-                <div class="font-extrabold text-[#0878F9] flex items-center gap-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M9 3v18"/></svg>
-                    <span>Struktur Kolom Berdampingan & Kolom Pemisah Kosong</span>
-                </div>
-                <p class="text-[#5A6E8C] font-medium leading-relaxed">
-                    Kami menyertakan kolom pembatas kosong di antara setiap kelompok (Berita, Agenda, Prestasi, Edaran, Karya, E-Mag) serta komentar kolom Supabase agar tabel Anda tersusun sangat rapi.
-                </p>
-            </div>
-
             <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
                 <button type="button" onclick="copySupabaseSQL()" class="px-3.5 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-[#0878F9] font-extrabold text-[11.5px] flex items-center gap-1.5 border border-blue-200">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
-                    <span>1. Salin SQL Tabel `alkanews` (Terwarna & Pemisah)</span>
+                    <span>1. Salin SQL Tabel `alkanews`</span>
                 </button>
                 <div class="flex items-center gap-2">
                     <button type="button" onclick="migrateAllArticlesToSupabase(false)" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#FF6A1A] to-[#FF4D1A] text-white font-extrabold text-[11.5px]">2. Kirim Data</button>
@@ -191,412 +307,438 @@
         </div>
     </div>
 
-    <aside class="w-[245px] shrink-0 glass-sidebar flex flex-col justify-between p-5 sticky top-0 h-screen z-40 select-none">
-        <div id="public-sidebar-nav" class="flex flex-col h-full justify-between">
-            <div>
-                <div onclick="switchPublicPage('dashboard')" class="cursor-pointer mb-8 px-2 inline-block group">
-                    <h1 class="font-black text-[23px] tracking-tight leading-none flex items-center">
-                        <span class="text-[#12325B] group-hover:text-[#0878F9] transition-colors">Alka</span>
-                        <span class="text-[#0878F9]">News</span>
+    <!-- MACOS WINDOW CONTAINER (Full Top Nav Style, No Sidebar) -->
+    <div class="macos-window w-full h-full md:rounded-[28px] flex flex-col overflow-hidden relative z-10 transition-all duration-500">
+
+        <!-- MACOS TOP HEADER BAR (3 Dots + Top Menu Tabs in Center/Left + Admin / Cloud Trigger) -->
+        <header class="h-16 px-6 shrink-0 z-40 bg-white/40 border-b border-white/60 flex items-center justify-between gap-4 select-none">
+            
+            <!-- Left: macOS 3 Dots & Brand Name -->
+            <div class="flex items-center gap-4 shrink-0">
+                <div class="flex items-center gap-2" title="macOS Window Controls">
+                    <span onclick="switchPublicPage('dashboard')" class="w-3.5 h-3.5 rounded-full bg-macos-red border border-black/10 shadow-inner cursor-pointer hover:opacity-80 transition-opacity" title="Reset ke Beranda"></span>
+                    <span onclick="switchPublicPage('agenda')" class="w-3.5 h-3.5 rounded-full bg-macos-yellow border border-black/10 shadow-inner cursor-pointer hover:opacity-80 transition-opacity" title="Kalender Agenda"></span>
+                    <span onclick="switchPublicPage('prestasi')" class="w-3.5 h-3.5 rounded-full bg-macos-green border border-black/10 shadow-inner cursor-pointer hover:opacity-80 transition-opacity" title="Hall of Fame"></span>
+                </div>
+                <div onclick="switchPublicPage('dashboard')" class="cursor-pointer flex items-center gap-2">
+                    <h1 class="font-black text-[18px] tracking-tight leading-none flex items-center">
+                        <span class="text-[#12325B]">Alka</span><span class="text-[#0878F9]">News</span>
                     </h1>
                 </div>
-                <nav class="space-y-1.5">
-                    <button type="button" id="nav-berita" onclick="switchPublicPage('berita')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="7" x="3" y="3" rx="1"/><rect width="9" height="7" x="3" y="14" rx="1"/><rect width="5" height="7" x="16" y="14" rx="1"/></svg><span>Berita Utama</span></button>
-                    <button type="button" id="nav-agenda" onclick="switchPublicPage('agenda')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg><span>Kalender Agenda</span></button>
-                    <button type="button" id="nav-prestasi" onclick="switchPublicPage('prestasi')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg><span>Hall of Fame</span></button>
-                </nav>
-                <div class="mt-6 pt-5 border-t border-slate-200/60">
-                    <div class="px-3 mb-2.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#0878F9]">PUBLIKASI EKSTRA</div>
-                    <nav class="space-y-1.5">
-                        <button type="button" id="nav-buletin" onclick="switchPublicPage('buletin')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg><span>Papan Edaran</span></button>
-                        <button type="button" id="nav-artikel" onclick="switchPublicPage('artikel')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.086 18.412A2 2 0 0112.67 19H5v-7.672a2 2 0 01.586-1.414L11.75 3.75a6 6 0 118.49 8.49z"/><path d="M16 8 2 22"/><path d="M17.488 15H9"/></svg><span>Karya Siswa</span></button>
-                        <button type="button" id="nav-emagazine" onclick="switchPublicPage('emagazine')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg><span>E-Magazine</span></button>
-                    </nav>
+            </div>
+
+            <!-- Center: Top Navigation Menu Items -->
+            <nav id="public-top-nav" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                <button type="button" id="nav-dashboard" onclick="switchPublicPage('dashboard')" class="top-nav-item active">Beranda</button>
+                <button type="button" id="nav-berita" onclick="switchPublicPage('berita')" class="top-nav-item">Berita Utama</button>
+                <button type="button" id="nav-agenda" onclick="switchPublicPage('agenda')" class="top-nav-item">Kalender Agenda</button>
+                <button type="button" id="nav-prestasi" onclick="switchPublicPage('prestasi')" class="top-nav-item">Hall of Fame</button>
+                <button type="button" id="nav-buletin" onclick="switchPublicPage('buletin')" class="top-nav-item">Papan Edaran</button>
+                <button type="button" id="nav-artikel" onclick="switchPublicPage('artikel')" class="top-nav-item">Karya Siswa</button>
+                <button type="button" id="nav-emagazine" onclick="switchPublicPage('emagazine')" class="top-nav-item">E-Magazine</button>
+            </nav>
+
+            <!-- Admin Nav (Hidden by default unless authorized) -->
+            <nav id="admin-top-nav" class="hidden items-center gap-1.5 overflow-x-auto no-scrollbar py-1">
+                <button type="button" id="adm-nav-berita" onclick="switchAdminTab('berita')" class="top-nav-item active">Kelola Berita</button>
+                <button type="button" id="adm-nav-layout" onclick="switchAdminTab('layout')" class="top-nav-item">Layout Berita</button>
+                <button type="button" id="adm-nav-agenda" onclick="switchAdminTab('agenda')" class="top-nav-item">Kelola Agenda</button>
+                <button type="button" id="adm-nav-prestasi" onclick="switchAdminTab('prestasi')" class="top-nav-item">Hall of Fame</button>
+                <button type="button" id="adm-nav-buletin" onclick="switchAdminTab('buletin')" class="top-nav-item">Papan Edaran</button>
+                <button type="button" id="adm-nav-artikel" onclick="switchAdminTab('artikel')" class="top-nav-item">Karya Siswa</button>
+                <button type="button" id="adm-nav-emagazine" onclick="switchAdminTab('emagazine')" class="top-nav-item">E-Magazine</button>
+                <button type="button" onclick="closeAdminConsole()" class="top-nav-item text-rose-600 bg-rose-50 font-extrabold">Keluar Admin</button>
+            </nav>
+
+            <!-- Right: Admin Trigger & Cloud Status (Eksklusif Super Admin / Admin AlkaNews) -->
+            <div class="flex items-center gap-3 shrink-0">
+                <div id="admin-trigger-container" class="hidden items-center gap-2">
+                    <button type="button" onclick="openAdminConsole()" class="px-3.5 py-1.5 rounded-full bg-rose-500 text-white font-extrabold text-[11px] shadow hover:bg-rose-600 flex items-center gap-1.5 transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+                        <span>Portal Admin</span>
+                    </button>
+                    <button type="button" onclick="openSupabaseModal()" class="px-3 py-1.5 rounded-full bg-white/70 hover:bg-white border border-white/90 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm transition-all">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="hidden sm:inline">Supabase Cloud</span>
+                    </button>
                 </div>
             </div>
-            <div id="admin-trigger-container" class="pt-4 border-t border-slate-200/60 hidden">
-                <button type="button" onclick="openAdminConsole()" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-rose-500 hover:bg-rose-50/90 font-extrabold text-[12.5px] transition-all">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                    <span>Portal Admin CMS</span>
-                </button>
-            </div>
+        </header>
+
+        <div class="flex-1 flex overflow-hidden relative">
+
+            <!-- MAIN CONTENT AREA (Full width) -->
+            <main class="flex-1 h-full overflow-y-auto custom-scrollbar p-5 sm:p-8 w-full">
+
+                <!-- HALAMAN 1: DASHBOARD -->
+                <section id="page-dashboard" class="public-page space-y-6">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <h2 class="font-black text-[28px] sm:text-[32px] text-[#0558C8] tracking-tight leading-none mb-1.5">Dashboard Insight</h2>
+                            <p class="text-[13px] font-medium text-[#7486A0]">Ringkasan aktivitas dan informasi terkini secara real-time.</p>
+                        </div>
+                        <div class="text-right">
+                            <div id="live-clock" class="font-black text-[20px] text-[#12325B] leading-none mb-1">12.31</div>
+                            <div id="live-date" class="text-[11.5px] font-semibold text-[#7486A0]">Sabtu, 10 Oktober 2026</div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <div id="dash-headline-box" class="lg:col-span-8"></div>
+                        <div id="dash-hof-box" class="lg:col-span-4"></div>
+                    </div>
+
+                    <!-- LAYOUT ASIMETRIS ESTETIK: Agenda di Kiri (Lebar), Papan Edaran di Kanan -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <!-- Kolom Kiri: Jadwal Agenda Terkini (Lebar 7 Kolom) -->
+                        <div class="lg:col-span-7 space-y-3">
+                            <div class="flex items-center justify-between px-1">
+                                <h3 class="font-extrabold text-[14.5px] text-[#12325B] flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#FF7A1A]"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+                                    <span>Jadwal Agenda Terkini</span>
+                                </h3>
+                                <button type="button" onclick="switchPublicPage('agenda')" class="text-[11.5px] font-extrabold text-[#0878F9] hover:underline">Semua Agenda →</button>
+                            </div>
+                            <div class="glass-card overflow-hidden p-2">
+                                <div id="dash-agenda-list" class="space-y-1.5"></div>
+                            </div>
+                        </div>
+
+                        <!-- Kolom Kanan: Papan Edaran Terkini (Lebar 5 Kolom) -->
+                        <div class="lg:col-span-5 space-y-3">
+                            <div class="flex items-center justify-between px-1">
+                                <h3 class="font-extrabold text-[14.5px] text-[#12325B] flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-500"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                                    <span>Papan Edaran Sekolah</span>
+                                </h3>
+                                <button type="button" onclick="switchPublicPage('buletin')" class="text-[11.5px] font-extrabold text-[#0878F9] hover:underline">Semua Edaran →</button>
+                            </div>
+                            <div class="glass-card overflow-hidden p-2">
+                                <div id="dash-buletin-list" class="space-y-1.5"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kartu 3 Kolom (Karya Siswa & E-Magazine) -->
+                    <div class="space-y-3 pt-2">
+                        <div class="flex items-center justify-between px-1">
+                            <h3 class="font-extrabold text-[14.5px] text-[#12325B]">Karya Siswa & Literasi Unggulan</h3>
+                            <button type="button" onclick="switchPublicPage('artikel')" class="text-[11.5px] font-extrabold text-[#0878F9] hover:underline">Jelajahi Karya Siswa</button>
+                        </div>
+                        <div id="dash-karya-list" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
+                    </div>
+                </section>
+
+                <!-- HALAMAN 2: BERITA UTAMA -->
+                <section id="page-berita" class="public-page hidden space-y-5">
+                    <div class="flex flex-wrap items-center justify-between gap-4 pb-1">
+                        <div>
+                            <h2 class="font-black text-[24px] sm:text-[28px] text-[#12325B] tracking-tight leading-none mb-1">Berita Utama</h2>
+                            <p class="text-[12.5px] font-medium text-[#7486A0]">Pusat informasi terkini dengan tata letak majalah digital yang proporsional.</p>
+                        </div>
+                        <div id="berita-category-tabs" class="flex flex-wrap items-center gap-1.5"></div>
+                    </div>
+                    <div id="berita-dynamic-sections" class="grid grid-cols-12 gap-5 items-start"></div>
+                </section>
+
+                <!-- HALAMAN 3: KALENDER AGENDA -->
+                <section id="page-agenda" class="public-page hidden space-y-6">
+                    <div>
+                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Kalender Agenda</h2>
+                        <p class="text-[13px] font-medium text-[#7486A0]">Pantau jadwal kegiatan, ujian, dan libur sekolah.</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        <div class="lg:col-span-8 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-black text-[17px] text-[#12325B]">Daftar Agenda</h3>
+                                <button type="button" onclick="openAgendaMonthPopup(event)" class="px-4 py-1.5 rounded-full bg-white/90 border border-white shadow-sm text-[#0878F9] font-extrabold text-[11.5px] flex items-center gap-1.5">
+                                    <span id="agenda-filter-month-label">Oktober 2026</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                                </button>
+                            </div>
+                            <div id="public-agenda-list" class="space-y-3.5"></div>
+                        </div>
+                        <div class="lg:col-span-4 glass-card p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 id="cal-widget-title" class="font-black text-[15px] text-[#12325B]">Oktober 2026</h4>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" onclick="stepPublicCalendar(-1)" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+                                    <button type="button" onclick="stepPublicCalendar(1)" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-7 text-center text-[10px] font-bold text-[#7486A0] mb-2"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div>
+                            <div id="cal-widget-grid" class="grid grid-cols-7 gap-y-1.5 text-center justify-items-center text-[11.5px] font-bold"></div>
+                            <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-center gap-4 text-[10px] font-bold text-[#7486A0]">
+                                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#FF7A1A]"></span> Ada Acara</span>
+                                <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#0878F9]"></span> Dipilih</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HALAMAN 4: HALL OF FAME -->
+                <section id="page-prestasi" class="public-page hidden space-y-6">
+                    <div>
+                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Hall of Fame</h2>
+                        <p class="text-[13px] font-medium text-[#7486A0]">Apresiasi tertinggi untuk setiap pencapaian luar biasa warga sekolah.</p>
+                    </div>
+                    <div id="hof-peak-banner"></div>
+                    <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+                        <h3 class="font-black text-[17px] text-[#12325B]">Daftar Prestasi</h3>
+                        <div id="hof-category-tabs" class="flex flex-wrap items-center gap-2"></div>
+                    </div>
+                    <div id="hof-grid-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                </section>
+
+                <!-- HALAMAN 5: PAPAN EDARAN -->
+                <section id="page-buletin" class="public-page hidden space-y-6">
+                    <div>
+                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Papan Edaran</h2>
+                        <p class="text-[13px] font-medium text-[#7486A0]">Informasi resmi, pengumuman, dan surat edaran sekolah.</p>
+                    </div>
+                    <div id="public-buletin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+                </section>
+
+                <!-- HALAMAN 6: KARYA SISWA -->
+                <section id="page-artikel" class="public-page hidden space-y-6">
+                    <div>
+                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Karya Siswa</h2>
+                        <p class="text-[13px] font-medium text-[#7486A0]">Pusat apresiasi literasi, opini, cerpen, dan puisi warga sekolah.</p>
+                    </div>
+                    <div id="public-karya-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                </section>
+
+                <!-- HALAMAN 7: E-MAGAZINE -->
+                <section id="page-emagazine" class="public-page hidden space-y-6">
+                    <div>
+                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">E-Magazine</h2>
+                        <p class="text-[13px] font-medium text-[#7486A0]">Baca buletin dan majalah bulanan sekolah secara digital.</p>
+                    </div>
+                    <div id="public-emag-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
+                </section>
+
+                <!-- HALAMAN 8: PORTAL ADMIN CMS -->
+                <section id="page-admin" class="public-page hidden space-y-6">
+                    <div>
+                        <h2 class="font-black text-[26px] sm:text-[30px] text-[#12325B] tracking-tight leading-none flex items-center gap-2.5 mb-1.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#FF5B22]"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+                            <span>Portal Admin CMS (Supabase Cloud)</span>
+                        </h2>
+                        <p class="text-[12.5px] font-medium text-[#7486A0]">Pusat kendali konten real-time terintegrasi awan secara global.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-blue-50 text-[#0878F9] flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/></svg></div><div id="stat-total-berita" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">TOTAL BERITA</div></div>
+                        <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-orange-50 text-[#FF7A1A] flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div><div id="stat-total-agenda" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">AGENDA AKTIF</div></div>
+                        <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg></div><div id="stat-total-prestasi" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">TOTAL PRESTASI</div></div>
+                        <div onclick="openSupabaseModal()" class="glass-card p-5 text-center cursor-pointer hover:border-emerald-300 transition-all"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div><div id="stat-cloud-status" class="font-black text-[18px] text-emerald-600">Connected</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">1 SHEET `alkanews`</div></div>
+                    </div>
+
+                    <!-- ADMIN TAB 1: KELOLA BERITA -->
+                    <div id="admin-tab-berita" class="admin-subpage">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div class="lg:col-span-8 glass-card p-6">
+                                <div class="flex items-center justify-between mb-5">
+                                    <h3 class="font-black text-[16px] text-[#12325B] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#0878F9]"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg><span id="adm-form-heading">Publikasikan Berita Baru</span></h3>
+                                    <button type="button" onclick="resetAdminForm()" class="text-[11px] font-bold text-[#7486A0]">Reset Form</button>
+                                </div>
+                                <input type="hidden" id="adm-edit-id" value="">
+                                <div class="space-y-4">
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">JUDUL BERITA *</label><input type="text" id="adm-title" placeholder="Masukkan judul berita..." class="glass-input w-full px-4 py-2.5 text-[12.5px] font-medium text-[#12325B] outline-none"></div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">PENULIS *</label><input type="text" id="adm-author" list="guru-datalist" placeholder="Nama Guru..." class="glass-input w-full px-4 py-2.5 text-[12.5px] font-medium text-[#12325B] outline-none"><datalist id="guru-datalist"></datalist></div>
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider">KATEGORI *</label><button type="button" onclick="openCategoryManager('berita')" class="text-[10px] font-extrabold text-[#0878F9] hover:underline">+ Kategori</button></div>
+                                            <select id="adm-category" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12.5px] font-bold text-[#12325B] outline-none hidden"></select>
+                                        </div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">TANGGAL *</label><input type="hidden" id="adm-date" value="16 Okt 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-date', 'adm-date-label', 'short')" class="glass-input w-full px-3.5 py-2.5 text-[12px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-date-label">16 Okt 2026</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#0878F9]"><path d="M12.127 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v5.125"/></svg></button></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider">GAMBAR SAMPUL *</label><button type="button" onclick="openCropperForThumbnail()" class="text-[10.5px] font-extrabold text-amber-600 hover:underline">Crop Sampul</button></div>
+                                        <div class="w-full h-40 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative"><img id="adm-thumb-preview" src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80" alt="Thumbnail" class="w-full h-full object-cover"><input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleThumbUpload(event)"></div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">ISI / KONTEN BERITA *</label>
+                                        <div class="border border-slate-200/90 rounded-2xl overflow-hidden bg-white/90">
+                                            <div class="flex flex-wrap items-center gap-1.5 p-2.5 border-b border-slate-100 bg-slate-50/80">
+                                                <button type="button" onclick="execEditorCmd('bold')" class="w-7 h-7 rounded-lg hover:bg-white font-black text-[12px]">B</button>
+                                                <button type="button" onclick="execEditorCmd('italic')" class="w-7 h-7 rounded-lg hover:bg-white italic font-serif text-[12px]">I</button>
+                                                <button type="button" onclick="cropSelectedEditorImage()" class="px-2 py-1 rounded-lg bg-amber-50 text-amber-700 font-bold text-[10.5px]">Crop Gambar</button>
+                                            </div>
+                                            <div id="adm-editor-content" contenteditable="true" class="p-4 min-h-[220px] max-h-[360px] overflow-y-auto custom-scrollbar text-[13px] leading-relaxed text-[#12325B] outline-none"><p>Tuliskan liputan mendalam...</p></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end pt-2"><button type="button" onclick="saveArticleFromAdmin()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0878F9] to-[#2989FF] text-white font-extrabold text-[12.5px] shadow-lg shadow-blue-500/25">Simpan ke Cloud CMS</button></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-4 glass-card p-5">
+                                <h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Berita Cloud</h3>
+                                <div id="adm-news-list" class="space-y-2.5 max-h-[620px] overflow-y-auto custom-scrollbar pr-1"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB 2: LAYOUT BERITA -->
+                    <div id="admin-tab-layout" class="admin-subpage hidden">
+                        <div class="glass-card p-6 space-y-5">
+                            <div class="flex flex-wrap items-center justify-between gap-4">
+                                <div><h3 class="font-black text-[16px] text-[#12325B]">Simulator Tata Letak Berita Utama</h3><p class="text-[11.5px] text-[#7486A0]">Atur urutan seksi secara real-time.</p></div>
+                                <button type="button" onclick="applyBeritaLayout()" class="px-5 py-2 rounded-xl bg-[#0878F9] text-white font-extrabold text-[12px]">Terapkan Layout</button>
+                            </div>
+                            <div id="layout-sim-viewport" class="mx-auto w-full"><div id="admin-layout-simulator-grid" class="grid grid-cols-12 gap-5 items-start"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB 3: KELOLA AGENDA -->
+                    <div id="admin-tab-agenda" class="admin-subpage hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div class="lg:col-span-8 glass-card p-6">
+                                <h3 class="font-black text-[16px] text-[#12325B] mb-5">Tambah Agenda Baru</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">NAMA KEGIATAN *</label><input type="text" id="adm-ag-title" placeholder="Ujian Tengah Semester" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">TANGGAL *</label><input type="hidden" id="adm-ag-day" value="18"><input type="hidden" id="adm-ag-month-short" value="OKT"><button type="button" onclick="openCuteDatePicker(event, 'adm-ag-day', 'adm-ag-date-label', 'agenda')" class="glass-input w-full px-4 py-2.5 text-[12.5px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-ag-date-label">18 Oktober 2026</span></button></div>
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">WAKTU *</label><input type="text" id="adm-ag-time" placeholder="08.00 - 12.00 WIB" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">LOKASI *</label><input type="text" id="adm-ag-loc" placeholder="Aula Utama" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                </div>
+                                <div class="flex justify-end"><button type="button" onclick="addAgendaFromAdmin()" class="px-6 py-2.5 rounded-full bg-[#FF7A1A] text-white font-extrabold text-[12.5px]">Simpan Agenda Cloud</button></div>
+                            </div>
+                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Agenda Cloud</h3><div id="adm-agenda-list" class="space-y-2.5"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB 4: HALL OF FAME -->
+                    <div id="admin-tab-prestasi" class="admin-subpage hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div class="lg:col-span-8 glass-card p-6">
+                                <h3 class="font-black text-[16px] text-[#12325B] mb-5">Catat Prestasi Baru</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL KEJUARAAN *</label><input type="text" id="adm-pr-title" placeholder="Juara 1 Lomba Sains..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">NAMA SISWA / TIM *</label><div class="inline-flex bg-slate-100 p-0.5 rounded-lg"><button type="button" id="pr-mode-btn-db" onclick="setStudentInputMode('pr', 'db')" class="px-2 py-0.5 rounded-md text-[9.5px] font-extrabold bg-white text-[#0878F9]">🎓 Data Siswa</button><button type="button" id="pr-mode-btn-manual" onclick="setStudentInputMode('pr', 'manual')" class="px-2 py-0.5 rounded-md text-[9.5px] font-bold text-slate-500">✍️ Manual</button></div></div>
+                                        <div id="pr-student-db-box" class="grid grid-cols-5 gap-1.5">
+                                            <div class="col-span-2"><select id="adm-pr-class-select" data-modern-select="true" onchange="onStudentClassFilterChange('pr')" class="hidden"></select></div>
+                                            <div class="col-span-3"><select id="adm-pr-student-select" data-modern-select="true" onchange="onStudentNameSelectChange('pr')" class="hidden"></select></div>
+                                        </div>
+                                        <div id="pr-student-manual-box" class="hidden"><input type="text" id="adm-pr-student" placeholder="Ketik manual..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">KATEGORI *</label><button type="button" onclick="openCategoryManager('prestasi')" class="text-[10px] font-extrabold text-[#0878F9]">+ Kategori</button></div>
+                                        <select id="adm-pr-cat" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12.5px] font-bold text-[#12325B] outline-none hidden"></select>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-2.5">
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">MEDALI *</label><select id="adm-pr-medal" data-modern-select="true" class="hidden"><option value="gold">🥇 Emas</option><option value="silver">🥈 Perak</option><option value="bronze">🥉 Perunggu</option></select></div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">TANGGAL *</label><input type="hidden" id="adm-pr-date" value="15 Okt 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-pr-date', 'adm-pr-date-label', 'short')" class="glass-input w-full px-3 py-2.5 text-[11.5px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-pr-date-label">15 Okt 2026</span></button></div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end"><button type="button" onclick="addPrestasiFromAdmin()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-extrabold text-[12.5px]">Catat Prestasi Cloud</button></div>
+                            </div>
+                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Hall of Fame Cloud</h3><div id="adm-prestasi-list" class="space-y-2.5"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB 5: PAPAN EDARAN -->
+                    <div id="admin-tab-buletin" class="admin-subpage hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div class="lg:col-span-8 glass-card p-6">
+                                <div class="flex items-center justify-between mb-5">
+                                    <h3 class="font-black text-[16px] text-[#12325B]"><span id="buletin-form-title">Terbitkan Surat Edaran Baru</span></h3>
+                                    <button type="button" onclick="resetBuletinForm()" class="text-[11px] font-bold text-[#7486A0]">Reset</button>
+                                </div>
+                                <input type="hidden" id="adm-bul-id" value="">
+                                <div class="space-y-4">
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL PENGUMUMAN *</label><input type="text" id="adm-bul-title" placeholder="Pemberitahuan Libur..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">PRIORITAS *</label><select id="adm-bul-priority" data-modern-select="true" class="hidden"><option value="TINGGI">🔴 TINGGI</option><option value="SEDANG">🟠 SEDANG</option><option value="NORMAL">🔵 NORMAL</option></select></div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">TANGGAL *</label><input type="hidden" id="adm-bul-date" value="10 Okt 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-bul-date', 'adm-bul-date-label', 'short')" class="glass-input w-full px-3.5 py-2.5 text-[12px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-bul-date-label">10 Okt 2026</span></button></div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">LAMPIRAN</label><input type="hidden" id="adm-bul-attachment" value=""><label class="glass-input w-full px-3.5 py-2.5 text-[11.5px] font-bold text-[#0878F9] flex items-center justify-between cursor-pointer"><span id="adm-bul-file-label" class="truncate">Upload File</span><input type="file" accept="image/*,.pdf" class="hidden" onchange="handleBuletinUpload(event)"></label></div>
+                                    </div>
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">ISI SURAT *</label><textarea id="adm-bul-content" rows="4" placeholder="Tuliskan isi surat edaran..." class="glass-input w-full p-4 text-[12.5px] text-[#12325B] outline-none"></textarea></div>
+                                    <div class="flex justify-end"><button type="button" onclick="saveBuletinFromAdmin()" class="px-6 py-2.5 rounded-full bg-rose-500 text-white font-extrabold text-[12.5px]">Terbitkan Edaran Cloud</button></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Papan Edaran</h3><div id="adm-buletin-list" class="space-y-2.5"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB 6: KELOLA KARYA SISWA -->
+                    <div id="admin-tab-artikel" class="admin-subpage hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div class="lg:col-span-8 glass-card p-6">
+                                <div class="flex items-center justify-between mb-5">
+                                    <h3 class="font-black text-[16px] text-[#12325B]"><span id="karya-form-title">Unggah Karya Siswa Baru</span></h3>
+                                    <button type="button" onclick="resetKaryaForm()" class="text-[11px] font-bold text-[#7486A0]">Reset</button>
+                                </div>
+                                <input type="hidden" id="adm-kr-id" value="">
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL KARYA *</label><input type="text" id="adm-kr-title" placeholder="Sekolahku Syurgaku" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">NAMA SISWA & KELAS *</label><div class="inline-flex bg-slate-100 p-0.5 rounded-lg"><button type="button" id="kr-mode-btn-db" onclick="setStudentInputMode('kr', 'db')" class="px-2 py-0.5 rounded-md text-[9.5px] font-extrabold bg-white text-purple-600">🎓 Data Siswa</button><button type="button" id="kr-mode-btn-manual" onclick="setStudentInputMode('kr', 'manual')" class="px-2 py-0.5 rounded-md text-[9.5px] font-bold text-slate-500">✍️ Manual</button></div></div>
+                                            <div id="kr-student-db-box" class="grid grid-cols-5 gap-1.5">
+                                                <div class="col-span-2"><select id="adm-kr-class-select" data-modern-select="true" onchange="onStudentClassFilterChange('kr')" class="hidden"></select></div>
+                                                <div class="col-span-3"><select id="adm-kr-student-select" data-modern-select="true" onchange="onStudentNameSelectChange('kr')" class="hidden"></select></div>
+                                            </div>
+                                            <div id="kr-student-manual-box" class="hidden"><input type="text" id="adm-kr-author" placeholder="Ketik manual..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">JENIS KARYA *</label><button type="button" onclick="openCategoryManager('karya')" class="text-[10px] font-extrabold text-purple-600">+ Kategori</button></div>
+                                            <select id="adm-kr-type" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12.5px] font-bold text-[#12325B] outline-none hidden"></select>
+                                        </div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">KUTIPAN PEMBUKA</label><input type="text" id="adm-kr-excerpt" placeholder="Setiap pagi mentari..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">GAMBAR ILUSTRASI *</label><button type="button" onclick="openCropperForKarya()" class="text-[10.5px] font-extrabold text-amber-600 hover:underline">Crop Gambar</button></div>
+                                        <input type="hidden" id="adm-kr-image" value="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80">
+                                        <img id="adm-kr-preview" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80" alt="Karya Preview" class="w-full h-36 object-cover rounded-2xl border border-slate-200">
+                                    </div>
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">ISI LENGKAP KARYA *</label><textarea id="adm-kr-fulltext" rows="4" placeholder="Tuliskan bait puisi atau cerpen..." class="glass-input w-full p-4 text-[12.5px] text-[#12325B] outline-none"></textarea></div>
+                                    <div class="flex justify-end"><button type="button" onclick="saveKaryaFromAdmin()" class="px-6 py-2.5 rounded-full bg-purple-600 text-white font-extrabold text-[12.5px]">Publikasikan Karya Cloud</button></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Karya Siswa</h3><div id="adm-karya-list" class="space-y-2.5"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- ADMIN TAB 7: KELOLA E-MAGAZINE -->
+                    <div id="admin-tab-emagazine" class="admin-subpage hidden">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                            <div class="lg:col-span-8 glass-card p-6">
+                                <div class="flex items-center justify-between mb-5">
+                                    <h3 class="font-black text-[16px] text-[#12325B]"><span id="emag-form-title">Terbitkan E-Magazine Baru</span></h3>
+                                    <button type="button" onclick="resetEmagazineForm()" class="text-[11px] font-bold text-[#7486A0]">Reset</button>
+                                </div>
+                                <input type="hidden" id="adm-emag-id" value="">
+                                <div class="space-y-4">
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL MAJALAH *</label><input type="text" id="adm-emag-title" placeholder="Inovasi Pembelajaran" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">EDISI BULAN & TAHUN *</label><input type="hidden" id="adm-emag-edition" value="EDISI OKT 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-emag-edition', 'adm-emag-edition-label', 'edition')" class="glass-input w-full px-3.5 py-2.5 text-[11.5px] font-extrabold text-[#FF7A1A] flex items-center justify-between"><span id="adm-emag-edition-label">EDISI OKT 2026</span></button></div>
+                                        <div>
+                                            <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">LABEL *</label><button type="button" onclick="openCategoryManager('emag')" class="text-[10px] font-extrabold text-[#0878F9]">+ Label</button></div>
+                                            <select id="adm-emag-badge" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12px] font-bold text-[#12325B] outline-none hidden"></select>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+                                        <div class="flex items-center gap-4">
+                                            <img id="adm-emag-preview" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" alt="Cover" class="w-20 h-28 object-cover rounded-xl shadow-md border border-white">
+                                            <div class="space-y-2">
+                                                <input type="hidden" id="adm-emag-cover" value="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80">
+                                                <button type="button" onclick="openCropperForEmag()" class="px-3.5 py-1.5 rounded-xl bg-amber-50 text-amber-700 font-extrabold text-[11px]">Crop Sampul 3:4</button>
+                                            </div>
+                                        </div>
+                                        <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">FILE PDF (OPSIONAL)</label><input type="hidden" id="adm-emag-pdf" value=""><label class="glass-input w-full px-4 py-2.5 text-[11.5px] font-bold text-[#0878F9] flex items-center justify-between cursor-pointer"><span id="adm-emag-pdf-label">Pilih File PDF...</span><input type="file" accept=".pdf,image/*" class="hidden" onchange="handleEmagPdfUpload(event)"></label></div>
+                                    </div>
+                                    <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">RINGKASAN EDISI</label><textarea id="adm-emag-desc" rows="3" placeholder="Ringkasan topik..." class="glass-input w-full p-3.5 text-[12.5px] text-[#12325B] outline-none"></textarea></div>
+                                    <div class="flex justify-end"><button type="button" onclick="saveEmagazineFromAdmin()" class="px-6 py-2.5 rounded-full bg-[#0878F9] text-white font-extrabold text-[12.5px]">Terbitkan E-Magazine Cloud</button></div>
+                                </div>
+                            </div>
+                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar E-Magazine</h3><div id="adm-emag-list" class="space-y-2.5"></div></div>
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
-
-        <div id="admin-sidebar-nav" class="flex-col h-full justify-between hidden">
-            <div>
-                <div class="mb-7 px-2"><h1 class="font-black text-[20px] tracking-tight text-[#FF5B22]">Admin Console</h1></div>
-                <nav class="space-y-1.5">
-                    <button type="button" id="adm-nav-berita" onclick="switchAdminTab('berita')" class="nav-item active"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11.35 22H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.706.706l3.588 3.588A2.4 2.4 0 0 1 20 8v5.35"/></svg><span>Kelola Berita</span></button>
-                    <button type="button" id="adm-nav-layout" onclick="switchAdminTab('layout')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg><span>Layout Berita</span></button>
-                    <button type="button" id="adm-nav-agenda" onclick="switchAdminTab('agenda')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 18h6"/><path d="M16 2v3"/><path d="M19 15v6"/><path d="M21 11.5V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h8.3"/><path d="M3 9h18"/><path d="M8 2v3"/></svg><span>Kelola Agenda</span></button>
-                    <button type="button" id="adm-nav-prestasi" onclick="switchAdminTab('prestasi')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg><span>Hall of Fame</span></button>
-                    <div class="pt-3 mt-3 border-t border-slate-200/60">
-                        <div class="px-3 mb-2 text-[9.5px] font-extrabold uppercase tracking-[0.14em] text-[#7486A0]">PUBLIKASI EKSTRA</div>
-                        <button type="button" id="adm-nav-buletin" onclick="switchAdminTab('buletin')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg><span>Papan Edaran</span></button>
-                        <button type="button" id="adm-nav-artikel" onclick="switchAdminTab('artikel')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.086 18.412A2 2 0 0112.67 19H5v-7.672a2 2 0 01.586-1.414L11.75 3.75a6 6 0 118.49 8.49z"/><path d="M16 8 2 22"/><path d="M17.488 15H9"/></svg><span>Karya Siswa</span></button>
-                        <button type="button" id="adm-nav-emagazine" onclick="switchAdminTab('emagazine')" class="nav-item"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg><span>E-Magazine</span></button>
-                    </div>
-                </nav>
-            </div>
-            <div class="pt-4">
-                <button type="button" onclick="closeAdminConsole()" class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#FF6A1A] to-[#FF4D1A] text-white font-extrabold text-[12.5px] shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
-                    <span>Kembali ke Website</span>
-                </button>
-            </div>
-        </div>
-    </aside>
-
-    <main class="flex-1 p-6 sm:p-10 max-w-[1380px] mx-auto w-full">
-
-        <!-- HALAMAN 1: DASHBOARD -->
-        <section id="page-dashboard" class="public-page space-y-6">
-            <div class="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                    <h2 class="font-black text-[28px] sm:text-[32px] text-[#0558C8] tracking-tight leading-none mb-1.5">Dashboard Insight</h2>
-                    <p class="text-[13px] font-medium text-[#7486A0]">Ringkasan aktivitas dan informasi terkini secara real-time.</p>
-                </div>
-                <div class="text-right">
-                    <div id="live-clock" class="font-black text-[20px] text-[#12325B] leading-none mb-1">12.31</div>
-                    <div id="live-date" class="text-[11.5px] font-semibold text-[#7486A0]">Sabtu, 10 Oktober 2026</div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <div id="dash-headline-box" class="lg:col-span-8"></div>
-                <div id="dash-hof-box" class="lg:col-span-4"></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-black text-[15px] text-[#12325B] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#FF7A1A]"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg><span>Agenda Terdekat</span></h3>
-                        <button type="button" onclick="switchPublicPage('agenda')" class="px-3 py-1 rounded-full bg-blue-50 text-[#0878F9] font-extrabold text-[10.5px]">Semua</button>
-                    </div>
-                    <div id="dash-agenda-list" class="space-y-3"></div>
-                </div>
-                <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-black text-[15px] text-[#12325B] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-500"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></svg><span>Papan Edaran</span></h3>
-                        <button type="button" onclick="switchPublicPage('buletin')" class="px-3 py-1 rounded-full bg-blue-50 text-[#0878F9] font-extrabold text-[10.5px]">Semua</button>
-                    </div>
-                    <div id="dash-buletin-list" class="space-y-3"></div>
-                </div>
-                <div class="glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-black text-[15px] text-[#12325B] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-purple-600"><path d="M14.086 18.412A2 2 0 0112.67 19H5v-7.672a2 2 0 01.586-1.414L11.75 3.75a6 6 0 118.49 8.49z"/><path d="M16 8 2 22"/><path d="M17.488 15H9"/></svg><span>Karya Siswa</span></h3>
-                        <button type="button" onclick="switchPublicPage('artikel')" class="px-3 py-1 rounded-full bg-blue-50 text-[#0878F9] font-extrabold text-[10.5px]">Semua</button>
-                    </div>
-                    <div id="dash-karya-list" class="space-y-3"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- HALAMAN 2: BERITA UTAMA -->
-        <section id="page-berita" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Berita Utama</h2>
-                <p class="text-[13px] font-medium text-[#7486A0]">Pusat informasi terlengkap dengan tata letak majalah digital interaktif.</p>
-            </div>
-            <div id="berita-category-tabs" class="flex flex-wrap items-center gap-2"></div>
-            <div id="berita-dynamic-sections" class="grid grid-cols-12 gap-6 items-start"></div>
-        </section>
-
-        <!-- HALAMAN 3: KALENDER AGENDA -->
-        <section id="page-agenda" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Kalender Agenda</h2>
-                <p class="text-[13px] font-medium text-[#7486A0]">Pantau jadwal kegiatan, ujian, dan libur sekolah.</p>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div class="lg:col-span-8 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-black text-[17px] text-[#12325B]">Daftar Agenda</h3>
-                        <button type="button" onclick="openAgendaMonthPopup(event)" class="px-4 py-1.5 rounded-full bg-white/90 border border-white shadow-sm text-[#0878F9] font-extrabold text-[11.5px] flex items-center gap-1.5">
-                            <span id="agenda-filter-month-label">Oktober 2026</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-                        </button>
-                    </div>
-                    <div id="public-agenda-list" class="space-y-3.5"></div>
-                </div>
-                <div class="lg:col-span-4 glass-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 id="cal-widget-title" class="font-black text-[15px] text-[#12325B]">Oktober 2026</h4>
-                        <div class="flex items-center gap-1.5">
-                            <button type="button" onclick="stepPublicCalendar(-1)" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-                            <button type="button" onclick="stepPublicCalendar(1)" class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-7 text-center text-[10px] font-bold text-[#7486A0] mb-2"><div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div></div>
-                    <div id="cal-widget-grid" class="grid grid-cols-7 gap-y-1.5 text-center justify-items-center text-[11.5px] font-bold"></div>
-                    <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-center gap-4 text-[10px] font-bold text-[#7486A0]">
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#FF7A1A]"></span> Ada Acara</span>
-                        <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#0878F9]"></span> Dipilih</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- HALAMAN 4: HALL OF FAME -->
-        <section id="page-prestasi" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Hall of Fame</h2>
-                <p class="text-[13px] font-medium text-[#7486A0]">Apresiasi tertinggi untuk setiap pencapaian luar biasa warga sekolah.</p>
-            </div>
-            <div id="hof-peak-banner"></div>
-            <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
-                <h3 class="font-black text-[17px] text-[#12325B]">Daftar Prestasi</h3>
-                <div id="hof-category-tabs" class="flex flex-wrap items-center gap-2"></div>
-            </div>
-            <div id="hof-grid-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-        </section>
-
-        <!-- HALAMAN 5: PAPAN EDARAN -->
-        <section id="page-buletin" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Papan Edaran</h2>
-                <p class="text-[13px] font-medium text-[#7486A0]">Informasi resmi, pengumuman, dan surat edaran sekolah.</p>
-            </div>
-            <div id="public-buletin-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-        </section>
-
-        <!-- HALAMAN 6: KARYA SISWA -->
-        <section id="page-artikel" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Karya Siswa</h2>
-                <p class="text-[13px] font-medium text-[#7486A0]">Pusat apresiasi literasi, opini, cerpen, dan puisi warga sekolah.</p>
-            </div>
-            <div id="public-karya-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </section>
-
-        <!-- HALAMAN 7: E-MAGAZINE -->
-        <section id="page-emagazine" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">E-Magazine</h2>
-                <p class="text-[13px] font-medium text-[#7486A0]">Baca buletin dan majalah bulanan sekolah secara digital.</p>
-            </div>
-            <div id="public-emag-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"></div>
-        </section>
-
-        <!-- HALAMAN 8: PORTAL ADMIN CMS -->
-        <section id="page-admin" class="public-page hidden space-y-6">
-            <div>
-                <h2 class="font-black text-[26px] sm:text-[30px] text-[#12325B] tracking-tight leading-none flex items-center gap-2.5 mb-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#FF5B22]"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-                    <span>Portal Admin CMS (Supabase Cloud)</span>
-                </h2>
-                <p class="text-[12.5px] font-medium text-[#7486A0]">Pusat kendali konten real-time terintegrasi awan secara global.</p>
-            </div>
-
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-blue-50 text-[#0878F9] flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/></svg></div><div id="stat-total-berita" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">TOTAL BERITA</div></div>
-                <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-orange-50 text-[#FF7A1A] flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div><div id="stat-total-agenda" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">AGENDA AKTIF</div></div>
-                <div class="glass-card p-5 text-center"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg></div><div id="stat-total-prestasi" class="font-black text-[24px] text-[#12325B]">0</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">TOTAL PRESTASI</div></div>
-                <div onclick="openSupabaseModal()" class="glass-card p-5 text-center cursor-pointer hover:border-emerald-300 transition-all"><div class="w-8 h-8 mx-auto mb-1.5 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg></div><div id="stat-cloud-status" class="font-black text-[18px] text-emerald-600">Connected</div><div class="text-[9.5px] font-extrabold uppercase text-[#7486A0]">1 SHEET `alkanews`</div></div>
-            </div>
-
-            <!-- ADMIN TAB 1: KELOLA BERITA -->
-            <div id="admin-tab-berita" class="admin-subpage">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div class="lg:col-span-8 glass-card p-6">
-                        <div class="flex items-center justify-between mb-5">
-                            <h3 class="font-black text-[16px] text-[#12325B] flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#0878F9]"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg><span id="adm-form-heading">Publikasikan Berita Baru</span></h3>
-                            <button type="button" onclick="resetAdminForm()" class="text-[11px] font-bold text-[#7486A0]">Reset Form</button>
-                        </div>
-                        <input type="hidden" id="adm-edit-id" value="">
-                        <div class="space-y-4">
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">JUDUL BERITA *</label><input type="text" id="adm-title" placeholder="Masukkan judul berita..." class="glass-input w-full px-4 py-2.5 text-[12.5px] font-medium text-[#12325B] outline-none"></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">PENULIS *</label><input type="text" id="adm-author" list="guru-datalist" placeholder="Nama Guru..." class="glass-input w-full px-4 py-2.5 text-[12.5px] font-medium text-[#12325B] outline-none"><datalist id="guru-datalist"></datalist></div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider">KATEGORI *</label><button type="button" onclick="openCategoryManager('berita')" class="text-[10px] font-extrabold text-[#0878F9] hover:underline">+ Kategori</button></div>
-                                    <select id="adm-category" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12.5px] font-bold text-[#12325B] outline-none hidden"></select>
-                                </div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">TANGGAL *</label><input type="hidden" id="adm-date" value="16 Okt 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-date', 'adm-date-label', 'short')" class="glass-input w-full px-3.5 py-2.5 text-[12px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-date-label">16 Okt 2026</span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[#0878F9]"><path d="M12.127 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v5.125"/></svg></button></div>
-                            </div>
-                            <div>
-                                <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider">GAMBAR SAMPUL *</label><button type="button" onclick="openCropperForThumbnail()" class="text-[10.5px] font-extrabold text-amber-600 hover:underline">Crop Sampul</button></div>
-                                <div class="w-full h-40 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 relative"><img id="adm-thumb-preview" src="https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1000&q=80" alt="Thumbnail" class="w-full h-full object-cover"><input type="file" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="handleThumbUpload(event)"></div>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5">ISI / KONTEN BERITA *</label>
-                                <div class="border border-slate-200/90 rounded-2xl overflow-hidden bg-white/90">
-                                    <div class="flex flex-wrap items-center gap-1.5 p-2.5 border-b border-slate-100 bg-slate-50/80">
-                                        <button type="button" onclick="execEditorCmd('bold')" class="w-7 h-7 rounded-lg hover:bg-white font-black text-[12px]">B</button>
-                                        <button type="button" onclick="execEditorCmd('italic')" class="w-7 h-7 rounded-lg hover:bg-white italic font-serif text-[12px]">I</button>
-                                        <button type="button" onclick="cropSelectedEditorImage()" class="px-2 py-1 rounded-lg bg-amber-50 text-amber-700 font-bold text-[10.5px]">Crop Gambar</button>
-                                    </div>
-                                    <div id="adm-editor-content" contenteditable="true" class="p-4 min-h-[220px] max-h-[360px] overflow-y-auto custom-scrollbar text-[13px] leading-relaxed text-[#12325B] outline-none"><p>Tuliskan liputan mendalam...</p></div>
-                                </div>
-                            </div>
-                            <div class="flex justify-end pt-2"><button type="button" onclick="saveArticleFromAdmin()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0878F9] to-[#2989FF] text-white font-extrabold text-[12.5px] shadow-lg shadow-blue-500/25">Simpan ke Cloud CMS</button></div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-4 glass-card p-5">
-                        <h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Berita Cloud</h3>
-                        <div id="adm-news-list" class="space-y-2.5 max-h-[620px] overflow-y-auto custom-scrollbar pr-1"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB 2: LAYOUT BERITA -->
-            <div id="admin-tab-layout" class="admin-subpage hidden">
-                <div class="glass-card p-6 space-y-5">
-                    <div class="flex flex-wrap items-center justify-between gap-4">
-                        <div><h3 class="font-black text-[16px] text-[#12325B]">Simulator Tata Letak Berita Utama</h3><p class="text-[11.5px] text-[#7486A0]">Atur urutan seksi secara real-time.</p></div>
-                        <button type="button" onclick="applyBeritaLayout()" class="px-5 py-2 rounded-xl bg-[#0878F9] text-white font-extrabold text-[12px]">Terapkan Layout</button>
-                    </div>
-                    <div id="layout-sim-viewport" class="mx-auto w-full"><div id="admin-layout-simulator-grid" class="grid grid-cols-12 gap-5 items-start"></div></div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB 3: KELOLA AGENDA -->
-            <div id="admin-tab-agenda" class="admin-subpage hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div class="lg:col-span-8 glass-card p-6">
-                        <h3 class="font-black text-[16px] text-[#12325B] mb-5">Tambah Agenda Baru</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">NAMA KEGIATAN *</label><input type="text" id="adm-ag-title" placeholder="Ujian Tengah Semester" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">TANGGAL *</label><input type="hidden" id="adm-ag-day" value="18"><input type="hidden" id="adm-ag-month-short" value="OKT"><button type="button" onclick="openCuteDatePicker(event, 'adm-ag-day', 'adm-ag-date-label', 'agenda')" class="glass-input w-full px-4 py-2.5 text-[12.5px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-ag-date-label">18 Oktober 2026</span></button></div>
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">WAKTU *</label><input type="text" id="adm-ag-time" placeholder="08.00 - 12.00 WIB" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">LOKASI *</label><input type="text" id="adm-ag-loc" placeholder="Aula Utama" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                        </div>
-                        <div class="flex justify-end"><button type="button" onclick="addAgendaFromAdmin()" class="px-6 py-2.5 rounded-full bg-[#FF7A1A] text-white font-extrabold text-[12.5px]">Simpan Agenda Cloud</button></div>
-                    </div>
-                    <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Agenda Cloud</h3><div id="adm-agenda-list" class="space-y-2.5"></div></div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB 4: HALL OF FAME -->
-            <div id="admin-tab-prestasi" class="admin-subpage hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div class="lg:col-span-8 glass-card p-6">
-                        <h3 class="font-black text-[16px] text-[#12325B] mb-5">Catat Prestasi Baru</h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL KEJUARAAN *</label><input type="text" id="adm-pr-title" placeholder="Juara 1 Lomba Sains..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                            <div>
-                                <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">NAMA SISWA / TIM *</label><div class="inline-flex bg-slate-100 p-0.5 rounded-lg"><button type="button" id="pr-mode-btn-db" onclick="setStudentInputMode('pr', 'db')" class="px-2 py-0.5 rounded-md text-[9.5px] font-extrabold bg-white text-[#0878F9]">🎓 Data Siswa</button><button type="button" id="pr-mode-btn-manual" onclick="setStudentInputMode('pr', 'manual')" class="px-2 py-0.5 rounded-md text-[9.5px] font-bold text-slate-500">✍️ Manual</button></div></div>
-                                <div id="pr-student-db-box" class="grid grid-cols-5 gap-1.5">
-                                    <div class="col-span-2"><select id="adm-pr-class-select" data-modern-select="true" onchange="onStudentClassFilterChange('pr')" class="hidden"></select></div>
-                                    <div class="col-span-3"><select id="adm-pr-student-select" data-modern-select="true" onchange="onStudentNameSelectChange('pr')" class="hidden"></select></div>
-                                </div>
-                                <div id="pr-student-manual-box" class="hidden"><input type="text" id="adm-pr-student" placeholder="Ketik manual..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                            </div>
-                            <div>
-                                <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">KATEGORI *</label><button type="button" onclick="openCategoryManager('prestasi')" class="text-[10px] font-extrabold text-[#0878F9]">+ Kategori</button></div>
-                                <select id="adm-pr-cat" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12.5px] font-bold text-[#12325B] outline-none hidden"></select>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2.5">
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">MEDALI *</label><select id="adm-pr-medal" data-modern-select="true" class="hidden"><option value="gold">🥇 Emas</option><option value="silver">🥈 Perak</option><option value="bronze">🥉 Perunggu</option></select></div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">TANGGAL *</label><input type="hidden" id="adm-pr-date" value="15 Okt 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-pr-date', 'adm-pr-date-label', 'short')" class="glass-input w-full px-3 py-2.5 text-[11.5px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-pr-date-label">15 Okt 2026</span></button></div>
-                            </div>
-                        </div>
-                        <div class="flex justify-end"><button type="button" onclick="addPrestasiFromAdmin()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-extrabold text-[12.5px]">Catat Prestasi Cloud</button></div>
-                    </div>
-                    <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Hall of Fame Cloud</h3><div id="adm-prestasi-list" class="space-y-2.5"></div></div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB 5: PAPAN EDARAN -->
-            <div id="admin-tab-buletin" class="admin-subpage hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div class="lg:col-span-8 glass-card p-6">
-                        <div class="flex items-center justify-between mb-5">
-                            <h3 class="font-black text-[16px] text-[#12325B]"><span id="buletin-form-title">Terbitkan Surat Edaran Baru</span></h3>
-                            <button type="button" onclick="resetBuletinForm()" class="text-[11px] font-bold text-[#7486A0]">Reset</button>
-                        </div>
-                        <input type="hidden" id="adm-bul-id" value="">
-                        <div class="space-y-4">
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL PENGUMUMAN *</label><input type="text" id="adm-bul-title" placeholder="Pemberitahuan Libur..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">PRIORITAS *</label><select id="adm-bul-priority" data-modern-select="true" class="hidden"><option value="TINGGI">🔴 TINGGI</option><option value="SEDANG">🟠 SEDANG</option><option value="NORMAL">🔵 NORMAL</option></select></div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">TANGGAL *</label><input type="hidden" id="adm-bul-date" value="10 Okt 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-bul-date', 'adm-bul-date-label', 'short')" class="glass-input w-full px-3.5 py-2.5 text-[12px] font-extrabold text-[#12325B] flex items-center justify-between"><span id="adm-bul-date-label">10 Okt 2026</span></button></div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">LAMPIRAN</label><input type="hidden" id="adm-bul-attachment" value=""><label class="glass-input w-full px-3.5 py-2.5 text-[11.5px] font-bold text-[#0878F9] flex items-center justify-between cursor-pointer"><span id="adm-bul-file-label" class="truncate">Upload File</span><input type="file" accept="image/*,.pdf" class="hidden" onchange="handleBuletinUpload(event)"></label></div>
-                            </div>
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">ISI SURAT *</label><textarea id="adm-bul-content" rows="4" placeholder="Tuliskan isi surat edaran..." class="glass-input w-full p-4 text-[12.5px] text-[#12325B] outline-none"></textarea></div>
-                            <div class="flex justify-end"><button type="button" onclick="saveBuletinFromAdmin()" class="px-6 py-2.5 rounded-full bg-rose-500 text-white font-extrabold text-[12.5px]">Terbitkan Edaran Cloud</button></div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Papan Edaran</h3><div id="adm-buletin-list" class="space-y-2.5"></div></div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB 6: KELOLA KARYA SISWA -->
-            <div id="admin-tab-artikel" class="admin-subpage hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div class="lg:col-span-8 glass-card p-6">
-                        <div class="flex items-center justify-between mb-5">
-                            <h3 class="font-black text-[16px] text-[#12325B]"><span id="karya-form-title">Unggah Karya Siswa Baru</span></h3>
-                            <button type="button" onclick="resetKaryaForm()" class="text-[11px] font-bold text-[#7486A0]">Reset</button>
-                        </div>
-                        <input type="hidden" id="adm-kr-id" value="">
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL KARYA *</label><input type="text" id="adm-kr-title" placeholder="Sekolahku Syurgaku" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">NAMA SISWA & KELAS *</label><div class="inline-flex bg-slate-100 p-0.5 rounded-lg"><button type="button" id="kr-mode-btn-db" onclick="setStudentInputMode('kr', 'db')" class="px-2 py-0.5 rounded-md text-[9.5px] font-extrabold bg-white text-purple-600">🎓 Data Siswa</button><button type="button" id="kr-mode-btn-manual" onclick="setStudentInputMode('kr', 'manual')" class="px-2 py-0.5 rounded-md text-[9.5px] font-bold text-slate-500">✍️ Manual</button></div></div>
-                                    <div id="kr-student-db-box" class="grid grid-cols-5 gap-1.5">
-                                        <div class="col-span-2"><select id="adm-kr-class-select" data-modern-select="true" onchange="onStudentClassFilterChange('kr')" class="hidden"></select></div>
-                                        <div class="col-span-3"><select id="adm-kr-student-select" data-modern-select="true" onchange="onStudentNameSelectChange('kr')" class="hidden"></select></div>
-                                    </div>
-                                    <div id="kr-student-manual-box" class="hidden"><input type="text" id="adm-kr-author" placeholder="Ketik manual..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">JENIS KARYA *</label><button type="button" onclick="openCategoryManager('karya')" class="text-[10px] font-extrabold text-purple-600">+ Kategori</button></div>
-                                    <select id="adm-kr-type" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12.5px] font-bold text-[#12325B] outline-none hidden"></select>
-                                </div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">KUTIPAN PEMBUKA</label><input type="text" id="adm-kr-excerpt" placeholder="Setiap pagi mentari..." class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                            </div>
-                            <div>
-                                <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">GAMBAR ILUSTRASI *</label><button type="button" onclick="openCropperForKarya()" class="text-[10.5px] font-extrabold text-amber-600 hover:underline">Crop Gambar</button></div>
-                                <input type="hidden" id="adm-kr-image" value="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80">
-                                <img id="adm-kr-preview" src="https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80" alt="Karya Preview" class="w-full h-36 object-cover rounded-2xl border border-slate-200">
-                            </div>
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">ISI LENGKAP KARYA *</label><textarea id="adm-kr-fulltext" rows="4" placeholder="Tuliskan bait puisi atau cerpen..." class="glass-input w-full p-4 text-[12.5px] text-[#12325B] outline-none"></textarea></div>
-                            <div class="flex justify-end"><button type="button" onclick="saveKaryaFromAdmin()" class="px-6 py-2.5 rounded-full bg-purple-600 text-white font-extrabold text-[12.5px]">Publikasikan Karya Cloud</button></div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Karya Siswa</h3><div id="adm-karya-list" class="space-y-2.5"></div></div>
-                </div>
-            </div>
-
-            <!-- ADMIN TAB 7: KELOLA E-MAGAZINE -->
-            <div id="admin-tab-emagazine" class="admin-subpage hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                    <div class="lg:col-span-8 glass-card p-6">
-                        <div class="flex items-center justify-between mb-5">
-                            <h3 class="font-black text-[16px] text-[#12325B]"><span id="emag-form-title">Terbitkan E-Magazine Baru</span></h3>
-                            <button type="button" onclick="resetEmagazineForm()" class="text-[11px] font-bold text-[#7486A0]">Reset</button>
-                        </div>
-                        <input type="hidden" id="adm-emag-id" value="">
-                        <div class="space-y-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">JUDUL MAJALAH *</label><input type="text" id="adm-emag-title" placeholder="Inovasi Pembelajaran" class="glass-input w-full px-4 py-2.5 text-[12.5px] text-[#12325B] outline-none"></div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">EDISI BULAN & TAHUN *</label><input type="hidden" id="adm-emag-edition" value="EDISI OKT 2026"><button type="button" onclick="openCuteDatePicker(event, 'adm-emag-edition', 'adm-emag-edition-label', 'edition')" class="glass-input w-full px-3.5 py-2.5 text-[11.5px] font-extrabold text-[#FF7A1A] flex items-center justify-between"><span id="adm-emag-edition-label">EDISI OKT 2026</span></button></div>
-                                <div>
-                                    <div class="flex items-center justify-between mb-1.5"><label class="block text-[10px] font-extrabold text-[#12325B] uppercase">LABEL *</label><button type="button" onclick="openCategoryManager('emag')" class="text-[10px] font-extrabold text-[#0878F9]">+ Label</button></div>
-                                    <select id="adm-emag-badge" data-modern-select="true" class="glass-input w-full px-3.5 py-2.5 text-[12px] font-bold text-[#12325B] outline-none hidden"></select>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
-                                <div class="flex items-center gap-4">
-                                    <img id="adm-emag-preview" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80" alt="Cover" class="w-20 h-28 object-cover rounded-xl shadow-md border border-white">
-                                    <div class="space-y-2">
-                                        <input type="hidden" id="adm-emag-cover" value="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80">
-                                        <button type="button" onclick="openCropperForEmag()" class="px-3.5 py-1.5 rounded-xl bg-amber-50 text-amber-700 font-extrabold text-[11px]">Crop Sampul 3:4</button>
-                                    </div>
-                                </div>
-                                <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">FILE PDF (OPSIONAL)</label><input type="hidden" id="adm-emag-pdf" value=""><label class="glass-input w-full px-4 py-2.5 text-[11.5px] font-bold text-[#0878F9] flex items-center justify-between cursor-pointer"><span id="adm-emag-pdf-label">Pilih File PDF...</span><input type="file" accept=".pdf,image/*" class="hidden" onchange="handleEmagPdfUpload(event)"></label></div>
-                            </div>
-                            <div><label class="block text-[10px] font-extrabold text-[#12325B] uppercase mb-1.5">RINGKASAN EDISI</label><textarea id="adm-emag-desc" rows="3" placeholder="Ringkasan topik..." class="glass-input w-full p-3.5 text-[12.5px] text-[#12325B] outline-none"></textarea></div>
-                            <div class="flex justify-end"><button type="button" onclick="saveEmagazineFromAdmin()" class="px-6 py-2.5 rounded-full bg-[#0878F9] text-white font-extrabold text-[12.5px]">Terbitkan E-Magazine Cloud</button></div>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar E-Magazine</h3><div id="adm-emag-list" class="space-y-2.5"></div></div>
-                </div>
-            </div>
-        </section>
-    </main>
+    </div>
 
     <script>
         const EMBEDDED_SUPABASE_URL = 'https://vjgydzodhejzwlvwxbmu.supabase.co';
@@ -635,10 +777,28 @@
         let currentCalMonth = 9;
         let currentCalYear = 2026;
         let selectedCalDay = 14;
+        let isAuthorizedAdmin = false;
 
-        // ==========================================
-        // 1. MASTER SSO INTEGRATION (MY ALKA PORTAL)
-        // ==========================================
+        function applyAdminVisibility(isAdmin) {
+            isAuthorizedAdmin = Boolean(isAdmin);
+            const adminTrigger = document.getElementById('admin-trigger-container');
+            if (adminTrigger) {
+                if (isAuthorizedAdmin) {
+                    adminTrigger.classList.remove('hidden');
+                    adminTrigger.classList.add('flex');
+                } else {
+                    adminTrigger.classList.add('hidden');
+                    adminTrigger.classList.remove('flex');
+                    if (typeof closeAdminConsole === 'function') {
+                        closeAdminConsole();
+                    }
+                    if (typeof closeSupabaseModal === 'function') {
+                        closeSupabaseModal();
+                    }
+                }
+            }
+        }
+
         function checkMasterAlkaPermission() {
             const urlParams = new URLSearchParams(window.location.search);
             const alkaIsAdmin = urlParams.get('alka_is_admin') === '1';
@@ -649,38 +809,22 @@
                 alkaIsAdmin ||
                 normalizedRole === 'admin' ||
                 normalizedRole === 'administrator' ||
-                normalizedRole === 'superadmin'
+                normalizedRole === 'superadmin' ||
+                normalizedRole === 'adminalkanews' ||
+                normalizedRole.includes('admin')
             );
 
-            const adminTrigger = document.getElementById('admin-trigger-container');
-            if (adminTrigger) {
-                if (isAdmin) {
-                    adminTrigger.classList.remove('hidden');
-                } else {
-                    adminTrigger.classList.add('hidden');
-                    if (typeof closeAdminConsole === 'function') {
-                        closeAdminConsole();
-                    }
-                }
-            }
-            return isAdmin;
+            applyAdminVisibility(isAdmin);
+            return isAuthorizedAdmin;
         }
 
         window.addEventListener('message', (event) => {
             if (!event.data) return;
             if (event.data.type === 'ALKA_SSO_AUTH' || event.data.role !== undefined || event.data.alka_role !== undefined) {
-                const isSuperAdmin = event.data.isAdmin === true || event.data.alka_is_admin === true;
+                const isSuperAdmin = event.data.isAdmin === true || event.data.alka_is_admin === true || event.data.alka_is_admin === '1';
                 const role = String(event.data.alka_role || event.data.role || 'tamu').toLowerCase().replace(/[\s_-]+/g, '');
-                
-                const adminTrigger = document.getElementById('admin-trigger-container');
-                if (adminTrigger) {
-                    if (isSuperAdmin || role === 'admin' || role === 'superadmin') {
-                        adminTrigger.classList.remove('hidden');
-                    } else {
-                        adminTrigger.classList.add('hidden');
-                        if (typeof closeAdminConsole === 'function') closeAdminConsole();
-                    }
-                }
+                const allowed = isSuperAdmin || role === 'admin' || role === 'administrator' || role === 'superadmin' || role === 'adminalkanews' || role.includes('admin');
+                applyAdminVisibility(allowed);
             }
         });
 
@@ -1446,109 +1590,270 @@
             const head = articlesData[0];
             if (head) {
                 document.getElementById('dash-headline-box').innerHTML = `
-                    <div onclick="openArticleReader('${head.id}')" class="relative h-[285px] rounded-[26px] overflow-hidden cursor-pointer group shadow-lg border border-white">
-                        <img src="${head.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0F294A]/95 via-[#1E3A5F]/55 to-slate-400/20 p-7 flex flex-col justify-between">
-                            <div><span class="px-3.5 py-1 rounded-full bg-white text-[#0878F9] font-extrabold text-[10px] uppercase shadow-sm">HEADLINE</span></div>
-                            <div class="flex items-end justify-between gap-4">
-                                <div class="max-w-xl"><h3 class="font-black text-[22px] sm:text-[26px] text-white leading-tight mb-2">${head.title}</h3><p class="text-[12.5px] text-white/85 line-clamp-2">${head.excerpt}</p></div>
-                                <div class="w-11 h-11 rounded-full bg-white/20 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shrink-0 group-hover:bg-[#0878F9] transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></div>
+                    <div onclick="openArticleReader('${head.id}')" class="adobe-pastel-banner min-h-[250px] p-6 sm:p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group">
+                        <div class="pointer-events-none select-none absolute -right-4 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                            <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-full border-[22px] border-purple-500/80 shadow-[inset_0_8px_16px_rgba(255,255,255,0.7),0_18px_35px_rgba(147,51,234,0.28)] float-3d"></div>
+                            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-orange-500 to-rose-400 shadow-lg absolute -top-4 left-2 rotate-12 float-3d"></div>
+                            <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-400 shadow-md absolute -top-6 right-16"></div>
+                        </div>
+                        <div class="relative z-10 max-w-lg space-y-2.5">
+                            <div class="inline-flex items-center gap-2">
+                                <span class="px-3 py-1 rounded-full bg-slate-900 text-white font-extrabold text-[10px] uppercase shadow-sm">${head.category || 'HEADLINE'}</span>
+                                <span class="text-[11px] font-bold text-slate-600">${head.date}</span>
                             </div>
+                            <h3 class="font-black text-[20px] sm:text-[24px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-tight">${head.title}</h3>
+                            <p class="text-[12.5px] text-slate-600 line-clamp-2 leading-relaxed">${head.excerpt}</p>
+                        </div>
+                        <div class="relative z-10 pt-5 flex items-center gap-3">
+                            <button type="button" class="px-5 py-2 rounded-full bg-[#0878F9] text-white font-extrabold text-[12px] shadow-md shadow-blue-500/25">Baca Liputan Utama</button>
                         </div>
                     </div>`;
             }
             const peak = prestasiData[0];
             if (peak) {
                 document.getElementById('dash-hof-box').innerHTML = `
-                    <div onclick="switchPublicPage('prestasi')" class="gold-card h-[285px] p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group">
-                        <div class="flex items-center justify-between"><div class="w-11 h-11 rounded-2xl bg-amber-400/25 text-amber-700 flex items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg></div><span class="px-3 py-1 rounded-full bg-white/90 text-amber-700 font-extrabold text-[10px]">Hall of Fame</span></div>
-                        <div><h3 class="font-black text-[20px] text-[#12325B] leading-snug mb-1.5">${peak.title}</h3><p class="text-[12px] font-semibold text-[#5A6E8C]">${peak.student} • ${peak.date}</p></div>
+                    <div onclick="switchPublicPage('prestasi')" class="mobile-focus-banner min-h-[250px] p-6 sm:p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group text-white">
+                        <div class="flex items-center justify-between relative z-10">
+                            <span class="text-[11px] font-bold text-blue-200 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+                                <span>// Hall of Fame</span>
+                            </span>
+                            <span class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-300 text-slate-950 font-black text-[18px] flex items-center justify-center shadow-lg float-3d">🥇</span>
+                        </div>
+                        <div class="my-4 relative z-10">
+                            <h3 class="font-black text-[18px] sm:text-[20px] text-white leading-snug mb-1.5">${peak.title}</h3>
+                            <p class="text-[12px] font-semibold text-blue-100/80">${peak.student} • ${peak.date}</p>
+                        </div>
+                        <div class="relative z-10 flex items-center justify-between bg-white/10 hover:bg-white/15 backdrop-blur-md border border-white/15 rounded-full px-4 py-2 transition-all">
+                            <span class="text-[11.5px] font-bold text-white">Lihat Semua Prestasi</span>
+                            <span class="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-[11px]">→</span>
+                        </div>
                     </div>`;
             }
-            document.getElementById('dash-agenda-list').innerHTML = agendasData.slice(0, 2).map((ag, i) => `
-                <div onclick="switchPublicPage('agenda')" class="flex items-center gap-3.5 p-2.5 rounded-2xl hover:bg-white/80 cursor-pointer">
-                    <div class="w-11 h-11 rounded-2xl ${i===0?'bg-rose-50 text-rose-500':'bg-blue-50 text-[#0878F9]'} font-black text-[15px] flex items-center justify-center shrink-0 border border-white">${ag.day}</div>
-                    <div class="min-w-0"><h4 class="font-extrabold text-[12.5px] text-[#12325B] truncate">${ag.title}</h4><p class="text-[10.5px] font-semibold text-[#7486A0]">${ag.time.replace(' WIB','')}</p></div>
+
+            // Render Layout Asimetris Estetik: Agenda (Kiri) & Edaran (Kanan)
+            document.getElementById('dash-agenda-list').innerHTML = agendasData.slice(0, 3).map((ag, i) => `
+                <div onclick="switchPublicPage('agenda')" class="installed-row px-4 py-3 flex items-center justify-between gap-3 cursor-pointer rounded-xl">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-8 h-8 rounded-xl ${i%2===0?'bg-slate-900 text-blue-400':'bg-[#2E0B16] text-rose-400'} font-black text-[11px] flex items-center justify-center shrink-0">${ag.day}</div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[12.5px] text-[#12325B] truncate">${ag.title}</h4>
+                            <p class="text-[10px] text-[#7486A0]">${ag.month} • ${ag.time} • ${ag.location}</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[#12325B] font-bold text-[11px] shrink-0">Jadwal</span>
                 </div>`).join('');
-            document.getElementById('dash-buletin-list').innerHTML = buletinData.slice(0, 2).map(b => `
-                <div onclick="openBuletinReader('${b.id}')" class="p-3.5 rounded-2xl bg-white/85 border border-white shadow-sm cursor-pointer">
-                    <div class="text-[9.5px] font-extrabold text-rose-500 uppercase mb-1">🔴 ${b.priority}</div>
-                    <h4 class="font-extrabold text-[12.5px] text-[#12325B] truncate">${b.title}</h4>
+
+            document.getElementById('dash-buletin-list').innerHTML = buletinData.slice(0, 3).map(b => `
+                <div onclick="openBuletinReader('${b.id}')" class="installed-row px-4 py-3 flex items-center justify-between gap-3 cursor-pointer rounded-xl">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-8 h-8 rounded-xl bg-[#2D0A22] text-pink-400 font-extrabold text-[10px] flex items-center justify-center shrink-0">Ed</div>
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-[12.5px] text-[#12325B] truncate">${b.title}</h4>
+                            <p class="text-[10px] text-[#7486A0]">Prioritas ${b.priority} • ${b.date}</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-rose-50 text-rose-600 font-bold text-[11px] shrink-0">Buka</span>
                 </div>`).join('');
-            document.getElementById('dash-karya-list').innerHTML = karyaData.slice(0, 2).map(k => `
-                <div onclick="openKaryaReader('${k.id}')" class="flex items-center gap-3.5 p-3 rounded-2xl bg-white/85 border border-white shadow-sm cursor-pointer">
-                    <img src="${k.image}" class="w-12 h-12 rounded-xl object-cover shrink-0">
-                    <div class="min-w-0"><span class="text-[9.5px] font-extrabold text-purple-600 uppercase">${k.type}</span><h4 class="font-extrabold text-[13px] text-[#12325B] truncate">${k.title}</h4></div>
-                </div>`).join('');
+
+            const kCombined = [...karyaData.slice(0, 2), ...(emagazineData[0] ? [{ isEmag: true, ...emagazineData[0] }] : [])];
+            document.getElementById('dash-karya-list').innerHTML = kCombined.map((k, idx) => {
+                const badgeStyle = idx === 0 ? 'bg-[#1E1035] text-purple-300' : (idx === 1 ? 'bg-[#0F1E36] text-blue-300' : 'bg-[#33101E] text-rose-300');
+                const code = k.isEmag ? 'Em' : (k.type ? k.type.slice(0, 2) : 'Kr');
+                const action = k.isEmag ? `openEmagReader('${k.id}')` : `openKaryaReader('${k.id}')`;
+                return `
+                <div onclick="${action}" class="glass-card p-5 flex flex-col justify-between cursor-pointer group">
+                    <div>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-9 h-9 rounded-xl ${badgeStyle} font-extrabold text-[12px] flex items-center justify-center shrink-0">${code}</div>
+                            <h4 class="font-extrabold text-[14px] text-[#12325B] truncate group-hover:text-[#0878F9] transition-colors">${k.title}</h4>
+                        </div>
+                        <p class="text-[12px] text-[#5A6E8C] line-clamp-2 mb-4">${k.excerpt || k.desc || ''}</p>
+                    </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-[#7486A0] truncate max-w-[130px]">${k.author || k.edition || 'Redaksi'}</span>
+                        <span class="px-4 py-1 rounded-full ${idx===0?'bg-[#0878F9] text-white':'bg-white border border-slate-200 text-[#12325B]'} font-bold text-[11.5px]">Baca</span>
+                    </div>
+                </div>`;
+            }).join('');
         }
 
         function renderBeritaPage() {
             const tabs = ['Semua Liputan', ...dynamicCategories.berita];
             document.getElementById('berita-category-tabs').innerHTML = tabs.map(c => `
-                <button type="button" onclick="currentBeritaFilter='${c}';renderBeritaPage();" class="px-4 py-2 rounded-xl text-[12px] font-extrabold ${currentBeritaFilter === c ? 'bg-white text-[#0878F9] shadow-sm border border-blue-200' : 'bg-white/60 text-[#5A6E8C]'}">${c}</button>
+                <button type="button" onclick="currentBeritaFilter='${c}';renderBeritaPage();" class="px-3.5 py-1.5 rounded-full text-[11.5px] font-extrabold transition-all ${currentBeritaFilter === c ? 'bg-[#0878F9] text-white shadow-sm shadow-blue-500/25' : 'bg-white/75 hover:bg-white text-[#5A6E8C] border border-white'}">${c}</button>
             `).join('');
 
             const filtered = currentBeritaFilter === 'Semua Liputan' ? articlesData : articlesData.filter(a => a.category === currentBeritaFilter);
             const container = document.getElementById('berita-dynamic-sections');
-            if (filtered.length === 0) { container.innerHTML = `<div class="col-span-12 glass-card p-10 text-center text-[#7486A0] font-bold">Belum ada berita.</div>`; return; }
+            if (filtered.length === 0) { container.innerHTML = `<div class="col-span-12 glass-card p-10 text-center text-[#7486A0] font-bold">Belum ada berita pada kategori ini.</div>`; return; }
 
             container.innerHTML = beritaLayoutConfig.filter(s => s.visible !== false).map(sec => {
                 const span = sec.width === '66' ? 'col-span-12 lg:col-span-8' : (sec.width === '50' ? 'col-span-12 lg:col-span-6' : (sec.width === '33' ? 'col-span-12 lg:col-span-4' : 'col-span-12'));
-                return `<div class="${span}">${renderBeritaSectionBlock(sec.id, filtered)}</div>`;
+                const blockHtml = renderBeritaSectionBlock(sec.id, filtered);
+                return blockHtml ? `<div class="${span}">${blockHtml}</div>` : '';
             }).join('');
             lucide.createIcons();
         }
 
         function renderBeritaSectionBlock(secId, list) {
             const first = list[0];
-            if (secId === 'headline' && first) {
+            if (!first) return '';
+
+            if (secId === 'headline') {
+                const second = list[1] || null;
+                const quickList = list.slice(2, 5);
                 return `
-                    <div class="glass-card p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
-                        <div onclick="openArticleReader('${first.id}')" class="lg:col-span-7 h-[290px] rounded-2xl overflow-hidden relative bg-slate-100 cursor-pointer group">
-                            <img src="${first.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                            <span class="absolute top-4 left-4 px-3 py-1 rounded-full bg-white text-[#0878F9] font-extrabold text-[10px] uppercase shadow-sm">HEADLINE</span>
-                        </div>
-                        <div class="lg:col-span-5 space-y-3.5">
-                            <div class="text-[11px] font-bold text-[#7486A0]">${first.date}</div>
-                            <h3 onclick="openArticleReader('${first.id}')" class="font-black text-[24px] text-[#12325B] hover:text-[#0878F9] leading-tight cursor-pointer">${first.title}</h3>
-                            <p class="text-[12.5px] text-[#5A6E8C] leading-relaxed">${first.excerpt}</p>
-                            <button type="button" onclick="openArticleReader('${first.id}')" class="px-5 py-2.5 rounded-full bg-[#0878F9] text-white font-extrabold text-[12px]">Baca Selengkapnya →</button>
-                        </div>
-                    </div>`;
-            }
-            if (secId === 'hangat') {
-                const warm = list[1] || first;
-                const side = list.slice(2, 5);
-                return `
-                    <div class="space-y-4">
-                        <h3 class="font-black text-[17px] text-[#12325B]">Sedang Hangat</h3>
-                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-                            <div onclick="openArticleReader('${warm.id}')" class="lg:col-span-7 glass-card p-5 cursor-pointer">
-                                <div class="h-56 rounded-2xl overflow-hidden mb-4"><img src="${warm.image}" class="w-full h-full object-cover"></div>
-                                <span class="px-2.5 py-0.5 rounded bg-blue-50 text-[#0878F9] font-extrabold text-[10px] uppercase">${warm.category}</span>
-                                <h4 class="font-black text-[18px] text-[#12325B] mt-2 mb-1">${warm.title}</h4>
-                            </div>
-                            <div class="lg:col-span-5 space-y-3.5">
-                                ${side.map(i => `
-                                    <div onclick="openArticleReader('${i.id}')" class="glass-card p-3.5 flex items-center gap-3.5 cursor-pointer">
-                                        <img src="${i.image}" class="w-20 h-20 rounded-xl object-cover shrink-0">
-                                        <div class="min-w-0"><span class="text-[9px] font-extrabold text-[#0878F9] uppercase">${i.category}</span><h5 class="font-extrabold text-[13px] text-[#12325B] truncate">${i.title}</h5></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-stretch">
+                        <div onclick="openArticleReader('${first.id}')" class="lg:col-span-5 glass-card p-4 flex flex-col justify-between cursor-pointer group">
+                            <div>
+                                <div class="h-44 rounded-2xl overflow-hidden relative bg-slate-100 mb-3.5">
+                                    <img src="${first.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <div class="absolute top-3 left-3 flex items-center gap-1.5">
+                                        <span class="px-2.5 py-0.5 rounded-full bg-slate-900/90 backdrop-blur-md text-white font-extrabold text-[9.5px] uppercase tracking-wider">HEADLINE</span>
+                                        <span class="px-2.5 py-0.5 rounded-full bg-white/95 text-[#0878F9] font-extrabold text-[9.5px] uppercase">${first.category}</span>
                                     </div>
-                                `).join('')}
+                                </div>
+                                <h3 class="font-black text-[16.5px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-snug line-clamp-2 mb-1.5">${first.title}</h3>
+                                <p class="text-[12px] text-[#5A6E8C] line-clamp-2 leading-relaxed">${first.excerpt}</p>
+                            </div>
+                            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-[#7486A0]">${first.author} • ${first.date}</span>
+                                <span class="px-3.5 py-1 rounded-full bg-[#0878F9] text-white font-extrabold text-[11px] shadow-sm">Baca →</span>
+                            </div>
+                        </div>
+
+                        ${second ? `
+                        <div onclick="openArticleReader('${second.id}')" class="lg:col-span-4 glass-card p-4 flex flex-col justify-between cursor-pointer group">
+                            <div>
+                                <div class="h-44 rounded-2xl overflow-hidden relative bg-slate-100 mb-3.5">
+                                    <img src="${second.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <span class="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-white/95 text-[#0878F9] font-extrabold text-[9.5px] uppercase shadow-sm">${second.category}</span>
+                                </div>
+                                <h3 class="font-black text-[15.5px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-snug line-clamp-2 mb-1.5">${second.title}</h3>
+                                <p class="text-[11.5px] text-[#5A6E8C] line-clamp-2 leading-relaxed">${second.excerpt}</p>
+                            </div>
+                            <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-[#7486A0]">${second.date}</span>
+                                <span class="px-3 py-1 rounded-full bg-white border border-slate-200 text-[#12325B] group-hover:border-[#0878F9] group-hover:text-[#0878F9] font-bold text-[11px]">Buka</span>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="md:col-span-2 lg:col-span-3 glass-card p-4 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-100">
+                                    <span class="font-extrabold text-[12px] text-[#12325B] flex items-center gap-1.5">
+                                        <span class="w-2 h-2 rounded-full bg-[#FF7A1A]"></span>
+                                        <span>Sorotan Cepat</span>
+                                    </span>
+                                    <span class="text-[10px] font-bold text-[#7486A0]">Terkini</span>
+                                </div>
+                                <div class="divide-y divide-slate-100">
+                                    ${(quickList.length ? quickList : [first]).map((item, idx) => `
+                                        <div onclick="openArticleReader('${item.id}')" class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-2.5 cursor-pointer group">
+                                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-[#0878F9] font-black text-[10.5px] flex items-center justify-center shrink-0 mt-0.5">0${idx + 1}</span>
+                                            <div class="min-w-0">
+                                                <span class="text-[9px] font-extrabold text-[#0878F9] uppercase block leading-none mb-1">${item.category} • ${item.date}</span>
+                                                <h4 class="font-bold text-[12px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-snug line-clamp-2">${item.title}</h4>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div class="pt-2.5 mt-2 border-t border-slate-100 flex items-center justify-between text-[10.5px] font-bold text-[#7486A0]">
+                                <span>Total Liputan</span>
+                                <span class="text-[#0878F9] font-extrabold">${list.length} Berita</span>
                             </div>
                         </div>
                     </div>`;
             }
-            const rest = list.slice(5);
+
+            if (secId === 'hangat') {
+                const warmList = list.length > 5 ? list.slice(5, 9) : list.slice(1, 5);
+                if (warmList.length === 0) return '';
+                return `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between px-1">
+                            <h3 class="font-extrabold text-[14px] text-[#12325B] flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-[#0878F9]"></span>
+                                <span>Sedang Hangat Diperbincangkan</span>
+                            </h3>
+                            <span class="text-[11px] font-semibold text-[#7486A0]">Pilihan Redaksi</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            ${warmList.map(item => `
+                                <div onclick="openArticleReader('${item.id}')" class="glass-card p-3.5 flex flex-col justify-between cursor-pointer group">
+                                    <div>
+                                        <div class="h-32 rounded-2xl overflow-hidden mb-3 relative bg-slate-100">
+                                            <img src="${item.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md bg-white/90 backdrop-blur-md text-[#0878F9] font-extrabold text-[9px] uppercase">${item.category}</span>
+                                        </div>
+                                        <h4 class="font-extrabold text-[13.5px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-snug line-clamp-2 mb-1.5">${item.title}</h4>
+                                        <p class="text-[11px] text-[#5A6E8C] line-clamp-2 leading-relaxed mb-3">${item.excerpt}</p>
+                                    </div>
+                                    <div class="pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                                        <span class="text-[10.5px] font-bold text-[#7486A0]">${item.date}</span>
+                                        <span class="px-3 py-0.5 rounded-full bg-blue-50 text-[#0878F9] font-extrabold text-[10.5px]">Baca</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            }
+
+            if (secId === 'akademik') {
+                const akList = list.length > 9 ? list.slice(9, 13) : list.filter(a => a.category === 'Akademik' || a.category === 'Prestasi').slice(0, 4);
+                if (akList.length === 0) return '';
+                return `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between px-1">
+                            <h3 class="font-extrabold text-[14px] text-[#12325B] flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span>Fokus Akademik & Prestasi</span>
+                            </h3>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3.5">
+                            ${akList.map(i => `
+                                <div onclick="openArticleReader('${i.id}')" class="glass-card px-4 py-3 flex items-center justify-between gap-3.5 cursor-pointer group">
+                                    <div class="flex items-center gap-3.5 min-w-0">
+                                        <img src="${i.image}" class="w-14 h-14 rounded-xl object-cover shrink-0 border border-white shadow-sm">
+                                        <div class="min-w-0">
+                                            <div class="flex items-center gap-2 mb-0.5">
+                                                <span class="text-[9.5px] font-extrabold text-[#0878F9] uppercase">${i.category}</span>
+                                                <span class="text-slate-300">•</span>
+                                                <span class="text-[10px] font-semibold text-[#7486A0]">${i.date}</span>
+                                            </div>
+                                            <h5 class="font-extrabold text-[13px] text-[#12325B] group-hover:text-[#0878F9] transition-colors line-clamp-1">${i.title}</h5>
+                                            <p class="text-[11px] text-[#5A6E8C] line-clamp-1">${i.excerpt}</p>
+                                        </div>
+                                    </div>
+                                    <span class="px-3.5 py-1 rounded-full bg-white border border-slate-200 text-[#12325B] group-hover:bg-[#0878F9] group-hover:text-white group-hover:border-[#0878F9] font-bold text-[11px] shrink-0 transition-all">Baca</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>`;
+            }
+
+            const rest = list.length > 9 ? list.slice(9) : list.slice(2);
             if (rest.length === 0) return '';
             return `
-                <div class="space-y-3.5">
-                    <h3 class="font-black text-[16px] text-[#12325B]">Arsip Berita Terbaru</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between px-1">
+                        <h3 class="font-extrabold text-[14px] text-[#12325B]">Arsip Berita Terbaru</h3>
+                        <span class="text-[11px] font-semibold text-[#7486A0]">${rest.length} Artikel</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
                         ${rest.map(i => `
-                            <div onclick="openArticleReader('${i.id}')" class="glass-card p-4 flex items-center gap-3.5 cursor-pointer">
-                                <img src="${i.image}" class="w-16 h-16 rounded-xl object-cover shrink-0">
-                                <div class="min-w-0"><span class="text-[9.5px] font-extrabold text-[#0878F9] uppercase">${i.category}</span><h5 class="font-extrabold text-[13px] text-[#12325B] truncate">${i.title}</h5></div>
+                            <div onclick="openArticleReader('${i.id}')" class="glass-card p-3.5 flex items-center gap-3.5 cursor-pointer group">
+                                <img src="${i.image}" class="w-16 h-16 rounded-xl object-cover shrink-0 border border-white shadow-sm">
+                                <div class="min-w-0 flex-1">
+                                    <div class="flex items-center justify-between gap-1 mb-0.5">
+                                        <span class="text-[9.5px] font-extrabold text-[#0878F9] uppercase">${i.category}</span>
+                                        <span class="text-[9.5px] font-semibold text-[#7486A0]">${i.date}</span>
+                                    </div>
+                                    <h5 class="font-extrabold text-[12.5px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-snug line-clamp-2">${i.title}</h5>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -1793,7 +2098,7 @@
         function switchPublicPage(id) {
             document.querySelectorAll('.public-page').forEach(s => s.classList.add('hidden'));
             document.getElementById(`page-${id}`).classList.remove('hidden');
-            document.querySelectorAll('#public-sidebar-nav .nav-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#public-top-nav .top-nav-item').forEach(b => b.classList.remove('active'));
             const btn = document.getElementById(`nav-${id}`); if (btn) btn.classList.add('active');
             lucide.createIcons(); window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1802,26 +2107,34 @@
                 showToast('Akses ditolak: Anda bukan administrator My Alka.');
                 return;
             }
-            document.getElementById('public-sidebar-nav').classList.add('hidden');
-            const adm = document.getElementById('admin-sidebar-nav'); adm.classList.remove('hidden'); adm.classList.add('flex');
+            document.getElementById('public-top-nav').classList.add('hidden');
+            const adm = document.getElementById('admin-top-nav'); adm.classList.remove('hidden'); adm.classList.add('flex');
             document.querySelectorAll('.public-page').forEach(s => s.classList.add('hidden'));
             document.getElementById('page-admin').classList.remove('hidden');
             switchAdminTab('berita'); lucide.createIcons();
         }
         function closeAdminConsole() {
-            document.getElementById('admin-sidebar-nav').classList.add('hidden'); document.getElementById('admin-sidebar-nav').classList.remove('flex');
-            document.getElementById('public-sidebar-nav').classList.remove('hidden'); switchPublicPage('dashboard');
+            document.getElementById('admin-top-nav').classList.add('hidden'); document.getElementById('admin-top-nav').classList.remove('flex');
+            document.getElementById('public-top-nav').classList.remove('hidden'); switchPublicPage('dashboard');
         }
         function switchAdminTab(id) {
             document.querySelectorAll('.admin-subpage').forEach(el => el.classList.add('hidden'));
             document.getElementById(`admin-tab-${id}`).classList.remove('hidden');
-            document.querySelectorAll('#admin-sidebar-nav .nav-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#admin-top-nav .top-nav-item').forEach(b => b.classList.remove('active'));
             const btn = document.getElementById(`adm-nav-${id}`); if (btn) btn.classList.add('active');
             if (id === 'layout') renderAdminLayoutBuilder();
             lucide.createIcons();
         }
 
-        function openSupabaseModal() { document.getElementById('supabase-modal').classList.remove('hidden'); document.getElementById('supabase-modal').classList.add('flex'); lucide.createIcons(); }
+        function openSupabaseModal() {
+            if (!isAuthorizedAdmin && !checkMasterAlkaPermission()) {
+                showToast('Akses ditolak: Hanya Super Admin / Admin AlkaNews yang dapat membuka Cloud Setup.');
+                return;
+            }
+            document.getElementById('supabase-modal').classList.remove('hidden');
+            document.getElementById('supabase-modal').classList.add('flex');
+            lucide.createIcons();
+        }
         function closeSupabaseModal() { document.getElementById('supabase-modal').classList.add('hidden'); document.getElementById('supabase-modal').classList.remove('flex'); }
 
         function copySupabaseSQL() {
@@ -1829,72 +2142,64 @@
 drop table if exists public.alkanews;
 
 create table public.alkanews (
-  no_baris integer primary key,
+    no_baris integer primary key,
 
-  -- KELOMPOK 1: BERITA
-  berita_judul text,
-  berita_penulis text,
-  berita_kategori text,
-  berita_tanggal text,
-  berita_ringkasan text,
-  berita_isi text,
-  berita_gambar text,
-  pemisah_1 text default null,
+    -- KELOMPOK 1: BERITA
+    berita_judul text,
+    berita_penulis text,
+    berita_kategori text,
+    berita_tanggal text,
+    berita_ringkasan text,
+    berita_isi text,
+    berita_gambar text,
+    pemisah_1 text default null,
 
-  -- KELOMPOK 2: AGENDA
-  agenda_kegiatan text,
-  agenda_tanggal text,
-  agenda_bulan text,
-  agenda_waktu text,
-  agenda_lokasi text,
-  pemisah_2 text default null,
+    -- KELOMPOK 2: AGENDA
+    agenda_kegiatan text,
+    agenda_tanggal text,
+    agenda_bulan text,
+    agenda_waktu text,
+    agenda_lokasi text,
+    pemisah_2 text default null,
 
-  -- KELOMPOK 3: PRESTASI / HOF
-  prestasi_kejuaraan text,
-  prestasi_nama_siswa text,
-  prestasi_kategori text,
-  prestasi_medali text,
-  prestasi_tanggal text,
-  pemisah_3 text default null,
+    -- KELOMPOK 3: PRESTASI / HOF
+    prestasi_kejuaraan text,
+    prestasi_nama_siswa text,
+    prestasi_kategori text,
+    prestasi_medali text,
+    prestasi_tanggal text,
+    pemisah_3 text default null,
 
-  -- KELOMPOK 4: PAPAN EDARAN
-  edaran_judul text,
-  edaran_prioritas text,
-  edaran_tanggal text,
-  edaran_isi text,
-  edaran_lampiran text,
-  pemisah_4 text default null,
+    -- KELOMPOK 4: PAPAN EDARAN
+    edaran_judul text,
+    edaran_prioritas text,
+    edaran_tanggal text,
+    edaran_isi text,
+    edaran_lampiran text,
+    pemisah_4 text default null,
 
-  -- KELOMPOK 5: KARYA SISWA
-  karya_judul text,
-  karya_nama_siswa text,
-  karya_jenis text,
-  karya_kutipan text,
-  karya_isi text,
-  karya_gambar text,
-  pemisah_5 text default null,
+    -- KELOMPOK 5: KARYA SISWA
+    karya_judul text,
+    karya_nama_siswa text,
+    karya_jenis text,
+    karya_kutipan text,
+    karya_isi text,
+    karya_gambar text,
+    pemisah_5 text default null,
 
-  -- KELOMPOK 6: E-MAGAZINE
-  emag_judul text,
-  emag_edisi text,
-  emag_label text,
-  emag_ringkasan text,
-  emag_sampul text,
-  emag_file_pdf text,
+    -- KELOMPOK 6: E-MAGAZINE
+    emag_judul text,
+    emag_edisi text,
+    emag_label text,
+    emag_ringkasan text,
+    emag_sampul text,
+    emag_file_pdf text,
 
-  pengaturan_json text,
-  updated_at timestamptz default now()
+    pengaturan_json text,
+    updated_at timestamptz default now()
 );
 
--- KOMENTAR KELOMPOK SUPABASE INSPECTOR
 comment on table public.alkanews is 'Tabel Terpadu AlkaNews (Berita, Agenda, Prestasi, Edaran, Karya, E-Mag dengan Pemisah)';
-comment on column public.alkanews.berita_judul is '[BERITA] Judul liputan';
-comment on column public.alkanews.agenda_kegiatan is '[AGENDA] Nama kegiatan sekolah';
-comment on column public.alkanews.prestasi_kejuaraan is '[PRESTASI] Hall of fame siswa';
-comment on column public.alkanews.edaran_judul is '[EDARAN] Papan pengumuman';
-comment on column public.alkanews.karya_judul is '[KARYA] Literasi siswa';
-comment on column public.alkanews.emag_judul is '[EMAG] Majalah digital';
-
 alter table public.alkanews disable row level security;
 grant all on table public.alkanews to anon, authenticated, service_role;`;
 
@@ -1921,11 +2226,8 @@ grant all on table public.alkanews to anon, authenticated, service_role;`;
 
         window.addEventListener('DOMContentLoaded', () => {
             updateClock(); setInterval(updateClock, 30000);
-            
-            // 1. Eksekusi pengecekan hak akses SSO Master My Alka saat pertama kali dimuat
             checkMasterAlkaPermission();
 
-            // 2. Meminta sinyal autentikasi aktif ke induk My Alka jika dimuat dalam iframe
             if (window.parent && window.parent !== window) {
                 try {
                     window.parent.postMessage({ type: 'ALKA_REQUEST_SSO' }, '*');
