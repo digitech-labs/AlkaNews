@@ -157,6 +157,17 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Animasi Like & Reader Editorial */
+        @keyframes heartBurst {
+            0% { transform: scale(1); }
+            35% { transform: scale(1.35) rotate(-6deg); }
+            70% { transform: scale(0.92) rotate(4deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        .heart-animate { animation: heartBurst 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .reader-content-body p { margin-bottom: 1.15em; line-height: 1.85; }
+        .reader-content-body img { width: 100%; border-radius: 18px; margin: 1.25rem 0; box-shadow: 0 12px 30px -8px rgba(18, 50, 91, 0.12); }
     </style>
 </head>
 <body class="h-screen w-full relative flex items-center justify-center p-0 md:p-3 lg:p-4 select-none">
@@ -239,11 +250,10 @@
         </div>
     </div>
 
-    <!-- READER MODAL -->
-    <div id="reader-modal" class="fixed inset-0 z-[210] bg-[#12325B]/35 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeReaderModal()">
-        <div class="glass-card bg-white/95 w-full max-w-3xl max-h-[88vh] overflow-y-auto custom-scrollbar p-6 sm:p-8 relative shadow-2xl border border-white" onclick="event.stopPropagation()">
-            <button type="button" onclick="closeReaderModal()" class="sticky top-0 float-right w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-500 flex items-center justify-center transition-all z-10"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-            <div id="reader-modal-body"></div>
+    <!-- READER MODAL (Ultra Premium Editorial Magazine Style) -->
+    <div id="reader-modal" class="fixed inset-0 z-[210] bg-[#0B1E36]/65 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeReaderModal()">
+        <div class="glass-card bg-white/95 w-full max-w-4xl max-h-[92vh] overflow-y-auto custom-scrollbar relative shadow-[0_25px_70px_-15px_rgba(9,25,49,0.45)] border border-white rounded-[32px] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+            <div id="reader-modal-body" class="w-full"></div>
         </div>
     </div>
 
@@ -316,9 +326,9 @@
             <!-- Left: macOS 3 Dots & Brand Name -->
             <div class="flex items-center gap-4 shrink-0">
                 <div class="flex items-center gap-2" title="macOS Window Controls">
-                    <span onclick="switchPublicPage('dashboard')" class="w-3.5 h-3.5 rounded-full bg-macos-red border border-black/10 shadow-inner cursor-pointer hover:opacity-80 transition-opacity" title="Reset ke Beranda"></span>
-                    <span onclick="switchPublicPage('agenda')" class="w-3.5 h-3.5 rounded-full bg-macos-yellow border border-black/10 shadow-inner cursor-pointer hover:opacity-80 transition-opacity" title="Kalender Agenda"></span>
-                    <span onclick="switchPublicPage('prestasi')" class="w-3.5 h-3.5 rounded-full bg-macos-green border border-black/10 shadow-inner cursor-pointer hover:opacity-80 transition-opacity" title="Hall of Fame"></span>
+                    <span onclick="switchPublicPage('prestasi')" class="w-3.5 h-3.5 rounded-full bg-macos-red border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Hall of Fame"></span>
+                    <span onclick="switchPublicPage('agenda')" class="w-3.5 h-3.5 rounded-full bg-macos-yellow border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Kalender Agenda"></span>
+                    <span onclick="switchPublicPage('dashboard')" class="w-3.5 h-3.5 rounded-full bg-macos-green border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Beranda"></span>
                 </div>
                 <div onclick="switchPublicPage('dashboard')" class="cursor-pointer flex items-center gap-2">
                     <h1 class="font-black text-[18px] tracking-tight leading-none flex items-center">
@@ -332,7 +342,7 @@
                 <button type="button" id="nav-dashboard" onclick="switchPublicPage('dashboard')" class="top-nav-item active">Beranda</button>
                 <button type="button" id="nav-berita" onclick="switchPublicPage('berita')" class="top-nav-item">Berita Utama</button>
                 <button type="button" id="nav-agenda" onclick="switchPublicPage('agenda')" class="top-nav-item">Kalender Agenda</button>
-                <button type="button" id="nav-prestasi" onclick="switchPublicPage('prestasi')" class="top-nav-item">Hall of Fame</button>
+                <button type="button" id="nav-prestasi" onclick="switchPublicPage('prestasi')" class="top-nav-item">Prestasi</button>
                 <button type="button" id="nav-buletin" onclick="switchPublicPage('buletin')" class="top-nav-item">Papan Edaran</button>
                 <button type="button" id="nav-artikel" onclick="switchPublicPage('artikel')" class="top-nav-item">Karya Siswa</button>
                 <button type="button" id="nav-emagazine" onclick="switchPublicPage('emagazine')" class="top-nav-item">E-Magazine</button>
@@ -343,7 +353,7 @@
                 <button type="button" id="adm-nav-berita" onclick="switchAdminTab('berita')" class="top-nav-item active">Kelola Berita</button>
                 <button type="button" id="adm-nav-layout" onclick="switchAdminTab('layout')" class="top-nav-item">Layout Berita</button>
                 <button type="button" id="adm-nav-agenda" onclick="switchAdminTab('agenda')" class="top-nav-item">Kelola Agenda</button>
-                <button type="button" id="adm-nav-prestasi" onclick="switchAdminTab('prestasi')" class="top-nav-item">Hall of Fame</button>
+                <button type="button" id="adm-nav-prestasi" onclick="switchAdminTab('prestasi')" class="top-nav-item">Prestasi</button>
                 <button type="button" id="adm-nav-buletin" onclick="switchAdminTab('buletin')" class="top-nav-item">Papan Edaran</button>
                 <button type="button" id="adm-nav-artikel" onclick="switchAdminTab('artikel')" class="top-nav-item">Karya Siswa</button>
                 <button type="button" id="adm-nav-emagazine" onclick="switchAdminTab('emagazine')" class="top-nav-item">E-Magazine</button>
@@ -387,7 +397,7 @@
                         <div id="dash-hof-box" class="lg:col-span-4"></div>
                     </div>
 
-                    <!-- LAYOUT ASIMETRIS ESTETIK: Agenda di Kiri (Lebar), Papan Edaran di Kanan -->
+                    <!-- LAYOUT ASIMETRIS 2 KOLOM (Agenda di Kiri Lebih Lebar, Papan Edaran di Kanan) -->
                     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                         <!-- Kolom Kiri: Jadwal Agenda Terkini (Lebar 7 Kolom) -->
                         <div class="lg:col-span-7 space-y-3">
@@ -398,8 +408,8 @@
                                 </h3>
                                 <button type="button" onclick="switchPublicPage('agenda')" class="text-[11.5px] font-extrabold text-[#0878F9] hover:underline">Semua Agenda →</button>
                             </div>
-                            <div class="glass-card overflow-hidden p-2">
-                                <div id="dash-agenda-list" class="space-y-1.5"></div>
+                            <div class="glass-card overflow-hidden p-2.5">
+                                <div id="dash-agenda-list" class="space-y-2"></div>
                             </div>
                         </div>
 
@@ -412,8 +422,8 @@
                                 </h3>
                                 <button type="button" onclick="switchPublicPage('buletin')" class="text-[11.5px] font-extrabold text-[#0878F9] hover:underline">Semua Edaran →</button>
                             </div>
-                            <div class="glass-card overflow-hidden p-2">
-                                <div id="dash-buletin-list" class="space-y-1.5"></div>
+                            <div class="glass-card overflow-hidden p-2.5">
+                                <div id="dash-buletin-list" class="space-y-2"></div>
                             </div>
                         </div>
                     </div>
@@ -440,14 +450,14 @@
                     <div id="berita-dynamic-sections" class="grid grid-cols-12 gap-5 items-start"></div>
                 </section>
 
-                <!-- HALAMAN 3: KALENDER AGENDA -->
+                <!-- HALAMAN 3: KALENDER AGENDA (Responsif: Kalender di atas saat layar sempit/potret) -->
                 <section id="page-agenda" class="public-page hidden space-y-6">
                     <div>
                         <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Kalender Agenda</h2>
                         <p class="text-[13px] font-medium text-[#7486A0]">Pantau jadwal kegiatan, ujian, dan libur sekolah.</p>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                        <div class="lg:col-span-8 space-y-4">
+                    <div class="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-6 items-start">
+                        <div class="lg:col-span-8 space-y-4 w-full">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-black text-[17px] text-[#12325B]">Daftar Agenda</h3>
                                 <button type="button" onclick="openAgendaMonthPopup(event)" class="px-4 py-1.5 rounded-full bg-white/90 border border-white shadow-sm text-[#0878F9] font-extrabold text-[11.5px] flex items-center gap-1.5">
@@ -457,7 +467,7 @@
                             </div>
                             <div id="public-agenda-list" class="space-y-3.5"></div>
                         </div>
-                        <div class="lg:col-span-4 glass-card p-6">
+                        <div class="lg:col-span-4 glass-card p-6 w-full">
                             <div class="flex items-center justify-between mb-4">
                                 <h4 id="cal-widget-title" class="font-black text-[15px] text-[#12325B]">Oktober 2026</h4>
                                 <div class="flex items-center gap-1.5">
@@ -475,10 +485,10 @@
                     </div>
                 </section>
 
-                <!-- HALAMAN 4: HALL OF FAME -->
+                <!-- HALAMAN 4: PRESTASI -->
                 <section id="page-prestasi" class="public-page hidden space-y-6">
                     <div>
-                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Hall of Fame</h2>
+                        <h2 class="font-black text-[28px] sm:text-[32px] text-[#12325B] tracking-tight leading-none mb-1.5">Prestasi</h2>
                         <p class="text-[13px] font-medium text-[#7486A0]">Apresiasi tertinggi untuk setiap pencapaian luar biasa warga sekolah.</p>
                     </div>
                     <div id="hof-peak-banner"></div>
@@ -605,7 +615,7 @@
                         </div>
                     </div>
 
-                    <!-- ADMIN TAB 4: HALL OF FAME -->
+                    <!-- ADMIN TAB 4: PRESTASI -->
                     <div id="admin-tab-prestasi" class="admin-subpage hidden">
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                             <div class="lg:col-span-8 glass-card p-6">
@@ -631,7 +641,7 @@
                                 </div>
                                 <div class="flex justify-end"><button type="button" onclick="addPrestasiFromAdmin()" class="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-extrabold text-[12.5px]">Catat Prestasi Cloud</button></div>
                             </div>
-                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Hall of Fame Cloud</h3><div id="adm-prestasi-list" class="space-y-2.5"></div></div>
+                            <div class="lg:col-span-4 glass-card p-5"><h3 class="font-black text-[14.5px] text-[#12325B] mb-4">Daftar Prestasi Cloud</h3><div id="adm-prestasi-list" class="space-y-2.5"></div></div>
                         </div>
                     </div>
 
@@ -769,6 +779,9 @@
             { id: 'akademik', name: 'Fokus Akademik (Horizontal)', width: '100', visible: true },
             { id: 'arsip', name: 'Arsip Berita Terbaru (Daftar)', width: '100', visible: true }
         ];
+        let articleLikesMap = {};
+        let likedBySession = {};
+        let readerFontSizeLevel = 1; // 0: compact, 1: normal, 2: large
 
         let activeCatManagerScope = 'berita';
         let studentInputModes = { pr: 'db', kr: 'db' };
@@ -952,7 +965,7 @@
                     emag_sampul: em ? em.cover : null,
                     emag_file_pdf: em ? em.pdfData : null,
 
-                    pengaturan_json: i === 0 ? JSON.stringify({ dynamicCategories, beritaLayoutConfig }) : null
+                    pengaturan_json: i === 0 ? JSON.stringify({ dynamicCategories, beritaLayoutConfig, articleLikesMap }) : null
                 });
             }
             return rows;
@@ -1033,6 +1046,7 @@
                         const cfg = JSON.parse(r.pengaturan_json);
                         if (cfg.dynamicCategories) dynamicCategories = cfg.dynamicCategories;
                         if (Array.isArray(cfg.beritaLayoutConfig)) beritaLayoutConfig = cfg.beritaLayoutConfig;
+                        if (cfg.articleLikesMap && typeof cfg.articleLikesMap === 'object') articleLikesMap = cfg.articleLikesMap;
                     } catch (e) {}
                 }
             });
@@ -1447,7 +1461,7 @@
             });
             document.getElementById('adm-pr-title').value = '';
             renderAllViews(); await migrateAllArticlesToSupabase(true);
-            showCuteSavePopup('Prestasi Dicatat!', 'Hall of Fame diperbarui di Cloud.');
+            showCuteSavePopup('Prestasi Dicatat!', 'Prestasi diperbarui di Cloud.');
         }
         async function removePrestasiFromAdmin(id) {
             prestasiData = prestasiData.filter(p => p.id !== id);
@@ -1586,37 +1600,55 @@
         }
 
         /* RENDER VIEWS */
+        function getArticleLikesCount(id) {
+            if (typeof articleLikesMap[id] === 'number') return articleLikesMap[id];
+            const num = parseInt(String(id).replace(/\D/g, ''), 10) || 1;
+            articleLikesMap[id] = 12 + ((num * 7) % 29);
+            return articleLikesMap[id];
+        }
+
         function renderDashboardPage() {
             const head = articlesData[0];
             if (head) {
+                const headLikes = getArticleLikesCount(head.id);
                 document.getElementById('dash-headline-box').innerHTML = `
-                    <div onclick="openArticleReader('${head.id}')" class="adobe-pastel-banner min-h-[250px] p-6 sm:p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group">
-                        <div class="pointer-events-none select-none absolute -right-4 top-1/2 -translate-y-1/2 flex items-center justify-center">
-                            <div class="w-36 h-36 sm:w-44 sm:h-44 rounded-full border-[22px] border-purple-500/80 shadow-[inset_0_8px_16px_rgba(255,255,255,0.7),0_18px_35px_rgba(147,51,234,0.28)] float-3d"></div>
-                            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-orange-500 to-rose-400 shadow-lg absolute -top-4 left-2 rotate-12 float-3d"></div>
-                            <div class="w-5 h-5 rounded-full bg-gradient-to-tr from-indigo-600 to-purple-400 shadow-md absolute -top-6 right-16"></div>
-                        </div>
-                        <div class="relative z-10 max-w-lg space-y-2.5">
+                    <div onclick="openArticleReader('${head.id}')" class="min-h-[265px] rounded-[24px] p-6 sm:p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group shadow-lg border border-white/90">
+                        <img src="${head.image}" alt="${head.title}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onerror="this.src='https://placehold.co/900x500/12325B/FFFFFF?text=AlkaNews'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#091931]/95 via-[#0F294A]/65 to-[#091931]/25"></div>
+                        <div class="relative z-10 flex items-center justify-between gap-2">
                             <div class="inline-flex items-center gap-2">
-                                <span class="px-3 py-1 rounded-full bg-slate-900 text-white font-extrabold text-[10px] uppercase shadow-sm">${head.category || 'HEADLINE'}</span>
-                                <span class="text-[11px] font-bold text-slate-600">${head.date}</span>
+                                <span class="px-3 py-1 rounded-full bg-[#0878F9] text-white font-extrabold text-[10px] uppercase tracking-wider shadow-sm">${head.category || 'HEADLINE'}</span>
+                                <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white font-bold text-[10.5px] border border-white/25">${head.date}</span>
                             </div>
-                            <h3 class="font-black text-[20px] sm:text-[24px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-tight">${head.title}</h3>
-                            <p class="text-[12.5px] text-slate-600 line-clamp-2 leading-relaxed">${head.excerpt}</p>
+                            <span class="px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white font-extrabold text-[11px] flex items-center gap-1.5 border border-white/25">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="#FB7185" stroke="#FB7185" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                <span>${headLikes}</span>
+                            </span>
                         </div>
-                        <div class="relative z-10 pt-5 flex items-center gap-3">
-                            <button type="button" class="px-5 py-2 rounded-full bg-[#0878F9] text-white font-extrabold text-[12px] shadow-md shadow-blue-500/25">Baca Liputan Utama</button>
+                        <div class="relative z-10 max-w-2xl space-y-2 mt-6">
+                            <h3 class="font-black text-[20px] sm:text-[25px] text-white group-hover:text-blue-200 transition-colors leading-tight drop-shadow-sm">${head.title}</h3>
+                            <p class="text-[12.5px] text-slate-200/90 line-clamp-2 leading-relaxed">${head.excerpt}</p>
+                            <div class="pt-3 flex flex-wrap items-center justify-between gap-3">
+                                <span class="text-[11.5px] font-bold text-blue-200 flex items-center gap-1.5">
+                                    <span class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-white text-[10px] font-black">${(head.author || 'R').charAt(0)}</span>
+                                    <span>${head.author || 'Redaksi AlkaNews'}</span>
+                                </span>
+                                <button type="button" class="px-5 py-2 rounded-full bg-white text-[#12325B] group-hover:bg-[#0878F9] group-hover:text-white transition-all font-extrabold text-[12px] shadow-md flex items-center gap-1.5">
+                                    <span>Baca Liputan Utama</span>
+                                    <span>→</span>
+                                </button>
+                            </div>
                         </div>
                     </div>`;
             }
             const peak = prestasiData[0];
             if (peak) {
                 document.getElementById('dash-hof-box').innerHTML = `
-                    <div onclick="switchPublicPage('prestasi')" class="mobile-focus-banner min-h-[250px] p-6 sm:p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group text-white">
+                    <div onclick="switchPublicPage('prestasi')" class="mobile-focus-banner min-h-[265px] p-6 sm:p-7 flex flex-col justify-between cursor-pointer relative overflow-hidden group text-white">
                         <div class="flex items-center justify-between relative z-10">
                             <span class="text-[11px] font-bold text-blue-200 flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
-                                <span>// Hall of Fame</span>
+                                <span>// Prestasi</span>
                             </span>
                             <span class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-500 to-cyan-300 text-slate-950 font-black text-[18px] flex items-center justify-center shadow-lg float-3d">🥇</span>
                         </div>
@@ -1631,7 +1663,7 @@
                     </div>`;
             }
 
-            // Render Layout Asimetris Estetik: Agenda (Kiri) & Edaran (Kanan)
+            // Render Layout Asimetris 2 Kolom: Agenda (Kiri) & Edaran (Kanan)
             document.getElementById('dash-agenda-list').innerHTML = agendasData.slice(0, 3).map((ag, i) => `
                 <div onclick="switchPublicPage('agenda')" class="installed-row px-4 py-3 flex items-center justify-between gap-3 cursor-pointer rounded-xl">
                     <div class="flex items-center gap-3 min-w-0">
@@ -1658,20 +1690,21 @@
 
             const kCombined = [...karyaData.slice(0, 2), ...(emagazineData[0] ? [{ isEmag: true, ...emagazineData[0] }] : [])];
             document.getElementById('dash-karya-list').innerHTML = kCombined.map((k, idx) => {
-                const badgeStyle = idx === 0 ? 'bg-[#1E1035] text-purple-300' : (idx === 1 ? 'bg-[#0F1E36] text-blue-300' : 'bg-[#33101E] text-rose-300');
-                const code = k.isEmag ? 'Em' : (k.type ? k.type.slice(0, 2) : 'Kr');
                 const action = k.isEmag ? `openEmagReader('${k.id}')` : `openKaryaReader('${k.id}')`;
+                const photoUrl = k.image || k.cover || 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=600&q=80';
+                const tagLabel = k.isEmag ? (k.badge || 'E-MAGAZINE') : (k.type || 'KARYA');
                 return `
-                <div onclick="${action}" class="glass-card p-5 flex flex-col justify-between cursor-pointer group">
+                <div onclick="${action}" class="glass-card p-4 flex flex-col justify-between cursor-pointer group overflow-hidden">
                     <div>
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="w-9 h-9 rounded-xl ${badgeStyle} font-extrabold text-[12px] flex items-center justify-center shrink-0">${code}</div>
-                            <h4 class="font-extrabold text-[14px] text-[#12325B] truncate group-hover:text-[#0878F9] transition-colors">${k.title}</h4>
+                        <div class="h-36 rounded-2xl overflow-hidden relative bg-slate-100 mb-3.5">
+                            <img src="${photoUrl}" alt="${k.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/12325B/FFFFFF?text=AlkaNews'">
+                            <span class="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full bg-slate-900/80 backdrop-blur-md text-white font-extrabold text-[9.5px] uppercase">${tagLabel}</span>
                         </div>
-                        <p class="text-[12px] text-[#5A6E8C] line-clamp-2 mb-4">${k.excerpt || k.desc || ''}</p>
+                        <h4 class="font-extrabold text-[14.5px] text-[#12325B] truncate group-hover:text-[#0878F9] transition-colors mb-1">${k.title}</h4>
+                        <p class="text-[12px] text-[#5A6E8C] line-clamp-2 mb-3">${k.excerpt || k.desc || ''}</p>
                     </div>
                     <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
-                        <span class="text-[11px] font-bold text-[#7486A0] truncate max-w-[130px]">${k.author || k.edition || 'Redaksi'}</span>
+                        <span class="text-[11px] font-bold text-[#7486A0] truncate max-w-[140px]">${k.author || k.edition || 'Redaksi'}</span>
                         <span class="px-4 py-1 rounded-full ${idx===0?'bg-[#0878F9] text-white':'bg-white border border-slate-200 text-[#12325B]'} font-bold text-[11.5px]">Baca</span>
                     </div>
                 </div>`;
@@ -1751,9 +1784,12 @@
                                 </div>
                                 <div class="divide-y divide-slate-100">
                                     ${(quickList.length ? quickList : [first]).map((item, idx) => `
-                                        <div onclick="openArticleReader('${item.id}')" class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-2.5 cursor-pointer group">
-                                            <span class="w-6 h-6 rounded-lg bg-blue-50 text-[#0878F9] font-black text-[10.5px] flex items-center justify-center shrink-0 mt-0.5">0${idx + 1}</span>
-                                            <div class="min-w-0">
+                                        <div onclick="openArticleReader('${item.id}')" class="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 cursor-pointer group">
+                                            <div class="w-12 h-12 rounded-xl overflow-hidden shrink-0 relative border border-white shadow-sm bg-slate-100">
+                                                <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" onerror="this.src='https://placehold.co/200x200/12325B/FFFFFF?text=News'">
+                                                <span class="absolute bottom-0 right-0 px-1 bg-slate-900/80 text-white font-black text-[8.5px] rounded-tl-md">0${idx + 1}</span>
+                                            </div>
+                                            <div class="min-w-0 flex-1">
                                                 <span class="text-[9px] font-extrabold text-[#0878F9] uppercase block leading-none mb-1">${item.category} • ${item.date}</span>
                                                 <h4 class="font-bold text-[12px] text-[#12325B] group-hover:text-[#0878F9] transition-colors leading-snug line-clamp-2">${item.title}</h4>
                                             </div>
@@ -2006,49 +2042,250 @@
         }
         function applyBeritaLayout() { renderBeritaPage(); showToast('Layout diterapkan!'); }
 
-        /* READERS & MODALS */
+        /* READERS & MODALS (Ultra Premium Editorial Style) */
+        function getShareAppsForDevice(articleId, title) {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?baca=${encodeURIComponent(articleId)}`;
+            const shareText = `📰 *${title}*\nBaca selengkapnya di Portal AlkaNews:\n${shareUrl}`;
+            const canNativeShare = typeof navigator.share === 'function';
+            return { shareUrl, shareText, canNativeShare };
+        }
+
+        function copyArticleShareLink(articleId, title) {
+            const { shareUrl } = getShareAppsForDevice(articleId, title);
+            const ta = document.createElement('textarea');
+            ta.value = shareUrl;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+
+            const copyLabel = document.getElementById('reader-copy-link-label');
+            if (copyLabel) {
+                copyLabel.textContent = 'Tautan Tersalin!';
+                setTimeout(() => { copyLabel.textContent = 'Copas Link'; }, 2400);
+            }
+            showToast('Tautan berhasil disalin!');
+        }
+
+        async function triggerDeviceNativeShare(articleId, title, excerpt) {
+            const { shareUrl, shareText, canNativeShare } = getShareAppsForDevice(articleId, title);
+            if (canNativeShare) {
+                try {
+                    await navigator.share({
+                        title: `${title} — AlkaNews`,
+                        text: excerpt || shareText,
+                        url: shareUrl
+                    });
+                } catch (err) {}
+            } else {
+                copyArticleShareLink(articleId, title);
+            }
+        }
+
+        async function toggleArticleLike(articleId) {
+            const current = getArticleLikesCount(articleId);
+            const isLiked = Boolean(likedBySession[articleId]);
+            if (isLiked) {
+                likedBySession[articleId] = false;
+                articleLikesMap[articleId] = Math.max(0, current - 1);
+            } else {
+                likedBySession[articleId] = true;
+                articleLikesMap[articleId] = current + 1;
+            }
+
+            const btn = document.getElementById('reader-like-btn');
+            const countEl = document.getElementById('reader-like-count');
+            const labelEl = document.getElementById('reader-like-label');
+            if (countEl) countEl.textContent = articleLikesMap[articleId];
+            if (labelEl) labelEl.textContent = likedBySession[articleId] ? 'Disukai' : 'Suka';
+            if (btn) {
+                btn.classList.remove('heart-animate');
+                void btn.offsetWidth;
+                btn.classList.add('heart-animate');
+                btn.className = likedBySession[articleId]
+                    ? 'heart-animate px-4 py-2 rounded-full bg-rose-500 text-white font-extrabold text-[12px] flex items-center gap-2 shadow-md shadow-rose-500/25 transition-all'
+                    : 'px-4 py-2 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 font-extrabold text-[12px] flex items-center gap-2 border border-rose-200/80 transition-all';
+            }
+            renderDashboardPage();
+            renderBeritaPage();
+            await migrateAllArticlesToSupabase(true);
+        }
+
+        function changeReaderFontSize(delta) {
+            readerFontSizeLevel = Math.max(0, Math.min(2, readerFontSizeLevel + delta));
+            const contentEl = document.getElementById('reader-article-content');
+            if (!contentEl) return;
+            const sizeClasses = ['text-[13.5px]', 'text-[15.5px]', 'text-[18px]'];
+            contentEl.classList.remove('text-[13.5px]', 'text-[15.5px]', 'text-[18px]');
+            contentEl.classList.add(sizeClasses[readerFontSizeLevel]);
+        }
+
         function openArticleReader(id) {
             const a = articlesData.find(x => String(x.id) === String(id));
             if (!a) return;
+
+            const likesCount = getArticleLikesCount(a.id);
+            const isLiked = Boolean(likedBySession[a.id]);
+            const plainWords = String(a.content || a.excerpt || '').replace(/<[^>]+>/g, ' ').trim().split(/\s+/).filter(Boolean).length;
+            const readMins = Math.max(1, Math.ceil(plainWords / 160));
+            const relatedList = articlesData.filter(x => String(x.id) !== String(a.id)).slice(0, 3);
+            const safeTitle = String(a.title || '').replace(/'/g, "\\'");
+            const safeExcerpt = String(a.excerpt || '').replace(/'/g, "\\'");
+
             document.getElementById('reader-modal-body').innerHTML = `
-                <span class="px-3 py-1 rounded-full bg-blue-50 text-[#0878F9] font-extrabold text-[10.5px] uppercase mb-3 inline-block">${a.category}</span>
-                <h2 class="font-black text-[24px] text-[#12325B] mb-2">${a.title}</h2>
-                <div class="text-[12px] font-semibold text-[#7486A0] mb-5">${a.author} • ${a.date}</div>
-                <img src="${a.image}" class="w-full h-72 object-cover rounded-2xl mb-6">
-                <div class="space-y-3 text-[14px] text-[#12325B] leading-relaxed">${a.content}</div>`;
-            document.getElementById('reader-modal').classList.remove('hidden'); document.getElementById('reader-modal').classList.add('flex');
+                <!-- Sticky Editorial Top Bar -->
+                <div class="sticky top-0 z-30 px-6 py-4 bg-white/90 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 min-w-0">
+                        <span class="px-3 py-1 rounded-full bg-blue-50 text-[#0878F9] font-extrabold text-[10.5px] uppercase tracking-wider shrink-0">${a.category || 'BERITA'}</span>
+                        <span class="text-[12px] font-bold text-[#7486A0] truncate hidden sm:inline">⏱️ ${readMins} menit baca • ${a.date}</span>
+                    </div>
+                    <div class="flex items-center gap-2.5 shrink-0">
+                        <div class="inline-flex items-center bg-slate-100 rounded-full p-0.5 border border-slate-200/70" title="Ukuran Teks Bacaan">
+                            <button type="button" onclick="changeReaderFontSize(-1)" class="px-3 py-1 rounded-full hover:bg-white text-[11px] font-extrabold text-[#12325B] transition-all">A-</button>
+                            <button type="button" onclick="changeReaderFontSize(1)" class="px-3 py-1 rounded-full hover:bg-white text-[12px] font-black text-[#0878F9] transition-all">A+</button>
+                        </div>
+                        <button type="button" onclick="closeReaderModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-500 flex items-center justify-center transition-all" title="Tutup">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Cover Image -->
+                <div class="px-6 pt-6">
+                    <div class="relative h-64 sm:h-[360px] rounded-[24px] overflow-hidden shadow-lg border border-slate-100 bg-slate-900">
+                        <img src="${a.image}" alt="${a.title}" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/900x500/12325B/FFFFFF?text=AlkaNews'">
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#091931]/90 via-[#091931]/25 to-transparent flex flex-col justify-end p-6 sm:p-8">
+                            <h1 class="font-black text-[22px] sm:text-[30px] text-white leading-tight drop-shadow-sm">${a.title}</h1>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Author & Interactive Like / Share Bar -->
+                <div class="px-6 py-5">
+                    <div class="p-4 rounded-2xl bg-slate-50/90 border border-slate-200/70 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#0878F9] to-indigo-500 text-white font-black text-[14px] flex items-center justify-center shadow-sm">
+                                ${(a.author || 'R').charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="font-extrabold text-[13px] text-[#12325B]">${a.author || 'Redaksi AlkaNews'}</div>
+                                <div class="text-[11px] font-semibold text-[#7486A0]">Diterbitkan ${a.date} • Jurnalis Sekolah</div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="button" id="reader-like-btn" onclick="toggleArticleLike('${a.id}')" class="${isLiked ? ' bg-rose-500 text-white shadow-md shadow-rose-500/25' : 'bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200/80'} px-4 py-2 rounded-full font-extrabold text-[12px] flex items-center gap-2 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                                <span id="reader-like-label">${isLiked ? 'Disukai' : 'Suka'}</span>
+                                <span id="reader-like-count" class="px-2 py-0.5 rounded-full bg-black/10 text-[11px] font-black">${likesCount}</span>
+                            </button>
+
+                            <button type="button" onclick="copyArticleShareLink('${a.id}', '${safeTitle}')" class="px-4 py-2 rounded-full bg-white hover:bg-blue-50 text-[#12325B] hover:text-[#0878F9] border border-slate-200 font-extrabold text-[12px] flex items-center gap-1.5 shadow-sm transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                <span id="reader-copy-link-label">Copas Link</span>
+                            </button>
+
+                            <button type="button" onclick="triggerDeviceNativeShare('${a.id}', '${safeTitle}', '${safeExcerpt}')" class="px-4 py-2 rounded-full bg-gradient-to-r from-[#0878F9] to-[#3898FF] hover:opacity-95 text-white font-extrabold text-[12px] flex items-center gap-1.5 shadow-md shadow-blue-500/25 transition-all">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+                                <span>Bagikan ke Sosmed</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Isi Artikel Utama -->
+                <div class="px-6 pb-8">
+                    <article id="reader-article-content" class="reader-content-body text-[15.5px] text-[#1E3A5F] leading-relaxed space-y-4 bg-white p-6 sm:p-8 rounded-[24px] border border-slate-100 shadow-sm">
+                        ${a.content}
+                    </article>
+
+                    ${relatedList.length ? `
+                        <div class="mt-8 pt-6 border-t border-slate-200/70">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-black text-[15px] text-[#12325B]">Berita Lainnya untuk Anda</h4>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                ${relatedList.map(rel => `
+                                    <div onclick="openArticleReader('${rel.id}')" class="glass-card p-3 flex items-center sm:flex-col sm:items-stretch gap-3 cursor-pointer group">
+                                        <div class="w-20 h-20 sm:w-full sm:h-28 rounded-xl overflow-hidden bg-slate-100 shrink-0">
+                                            <img src="${rel.image}" alt="${rel.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x260/12325B/FFFFFF?text=News'">
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <span class="text-[9px] font-extrabold text-[#0878F9] uppercase block mb-0.5">${rel.category} • ${rel.date}</span>
+                                            <h5 class="font-extrabold text-[12.5px] text-[#12325B] group-hover:text-[#0878F9] line-clamp-2 leading-snug">${rel.title}</h5>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>`;
+            document.getElementById('reader-modal').classList.remove('hidden');
+            document.getElementById('reader-modal').classList.add('flex');
         }
+
         function openBuletinReader(id) {
             const b = buletinData.find(x => String(x.id) === String(id));
             if (!b) return;
             document.getElementById('reader-modal-body').innerHTML = `
-                <span class="px-3 py-1 rounded-full bg-rose-50 text-rose-600 font-extrabold text-[10.5px] uppercase mb-3 inline-block">🔴 ${b.priority}</span>
-                <h2 class="font-black text-[22px] text-[#12325B] mb-2">${b.title}</h2>
-                <div class="text-[12px] font-semibold text-[#7486A0] mb-5">Diterbitkan: ${b.date}</div>
-                <div class="p-5 rounded-2xl bg-slate-50 border whitespace-pre-line">${b.content}</div>`;
+                <div class="sticky top-0 z-30 px-6 py-4 bg-white/90 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between">
+                    <span class="px-3.5 py-1 rounded-full bg-rose-50 text-rose-600 font-extrabold text-[10.5px] uppercase">🔴 Edaran Prioritas ${b.priority}</span>
+                    <button type="button" onclick="closeReaderModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-500 flex items-center justify-center transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                </div>
+                <div class="p-6 sm:p-8 space-y-4">
+                    <h2 class="font-black text-[24px] sm:text-[28px] text-[#12325B] leading-tight">${b.title}</h2>
+                    <div class="text-[12.5px] font-bold text-[#7486A0]">Diterbitkan Resmi: ${b.date}</div>
+                    <div class="p-6 rounded-[24px] bg-slate-50 border border-slate-200/80 text-[15px] leading-relaxed text-[#1E3A5F] whitespace-pre-line">${b.content}</div>
+                </div>`;
             document.getElementById('reader-modal').classList.remove('hidden'); document.getElementById('reader-modal').classList.add('flex');
         }
+
         function openKaryaReader(id) {
             const k = karyaData.find(x => String(x.id) === String(id));
             if (!k) return;
             document.getElementById('reader-modal-body').innerHTML = `
-                <span class="px-3 py-1 rounded-full bg-purple-50 text-purple-600 font-extrabold text-[10.5px] uppercase mb-3 inline-block">${k.type}</span>
-                <h2 class="font-black text-[24px] text-[#12325B] mb-1">"${k.title}"</h2>
-                <div class="text-[12.5px] font-bold text-purple-600 mb-5">oleh ${k.author}</div>
-                <img src="${k.image}" class="w-full h-64 object-cover rounded-2xl mb-5">
-                <div class="p-6 rounded-2xl bg-purple-50/50 border whitespace-pre-line italic">${k.fullText}</div>`;
+                <div class="sticky top-0 z-30 px-6 py-4 bg-white/90 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between">
+                    <span class="px-3.5 py-1 rounded-full bg-purple-50 text-purple-600 font-extrabold text-[10.5px] uppercase">✨ Karya Sastra • ${k.type}</span>
+                    <button type="button" onclick="closeReaderModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-500 flex items-center justify-center transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                </div>
+                <div class="p-6 sm:p-8 space-y-6">
+                    <div>
+                        <h2 class="font-black text-[26px] text-[#12325B] mb-2">"${k.title}"</h2>
+                        <div class="text-[13.5px] font-black text-purple-600">Karya oleh ${k.author}</div>
+                    </div>
+                    <div class="rounded-[24px] overflow-hidden shadow-md max-h-[380px] bg-slate-900 flex items-center justify-center">
+                        <img src="${k.image}" class="w-full object-cover max-h-[380px]">
+                    </div>
+                    <div class="p-6 sm:p-8 rounded-[24px] bg-purple-50/40 border border-purple-100 text-[16px] text-[#1E3A5F] leading-loose whitespace-pre-line font-serif italic text-center">
+                        ${k.fullText}
+                    </div>
+                </div>`;
             document.getElementById('reader-modal').classList.remove('hidden'); document.getElementById('reader-modal').classList.add('flex');
         }
+
         function openEmagReader(id) {
             const em = emagazineData.find(x => String(x.id) === String(id));
             if (!em) return;
             document.getElementById('reader-modal-body').innerHTML = `
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
-                    <div class="sm:col-span-5"><img src="${em.cover}" class="w-full rounded-2xl shadow-lg"></div>
-                    <div class="sm:col-span-7 space-y-3"><span class="px-3 py-1 rounded bg-orange-50 text-[#FF7A1A] font-extrabold text-[10.5px] uppercase">${em.edition}</span><h2 class="font-black text-[24px] text-[#12325B]">${em.title}</h2><p class="text-[13.5px] text-[#5A6E8C]">${em.desc}</p></div>
+                <div class="sticky top-0 z-30 px-6 py-4 bg-white/90 backdrop-blur-xl border-b border-slate-100 flex items-center justify-between">
+                    <span class="px-3.5 py-1 rounded-full bg-orange-50 text-[#FF7A1A] font-extrabold text-[10.5px] uppercase">📖 ${em.edition}</span>
+                    <button type="button" onclick="closeReaderModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-500 flex items-center justify-center transition-all"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+                </div>
+                <div class="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
+                    <div class="sm:col-span-5"><img src="${em.cover}" class="w-full rounded-[24px] shadow-2xl border-2 border-white"></div>
+                    <div class="sm:col-span-7 space-y-4">
+                        <span class="px-3 py-1 rounded-full bg-[#0878F9]/10 text-[#0878F9] font-black text-[11px] uppercase">${em.badge}</span>
+                        <h2 class="font-black text-[26px] text-[#12325B] leading-tight">${em.title}</h2>
+                        <p class="text-[14px] text-[#5A6E8C] leading-relaxed">${em.desc}</p>
+                        <button type="button" onclick="showToast('Mengunduh E-Magazine...')" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#0878F9] to-[#3898FF] text-white font-extrabold text-[12.5px] shadow-lg shadow-blue-500/30 flex items-center gap-2">
+                            <span>Unduh Edisi Lengkap (PDF)</span>
+                            <span>↓</span>
+                        </button>
+                    </div>
                 </div>`;
             document.getElementById('reader-modal').classList.remove('hidden'); document.getElementById('reader-modal').classList.add('flex');
         }
+
         function closeReaderModal() { document.getElementById('reader-modal').classList.add('hidden'); document.getElementById('reader-modal').classList.remove('flex'); }
 
         let cropperInstance = null, currentCropTarget = 'thumb';
@@ -2162,7 +2399,7 @@ create table public.alkanews (
     agenda_lokasi text,
     pemisah_2 text default null,
 
-    -- KELOMPOK 3: PRESTASI / HOF
+    -- KELOMPOK 3: PRESTASI
     prestasi_kejuaraan text,
     prestasi_nama_siswa text,
     prestasi_kategori text,
@@ -2240,7 +2477,13 @@ grant all on table public.alkanews to anon, authenticated, service_role;`;
             renderStudentSelectors('pr');
             renderStudentSelectors('kr');
             renderAllViews();
-            connectSupabaseCloud(true);
+            connectSupabaseCloud(true).then(() => {
+                const params = new URLSearchParams(window.location.search);
+                const bacaId = params.get('baca');
+                if (bacaId) {
+                    openArticleReader(bacaId);
+                }
+            });
         });
     </script>
 </body>
