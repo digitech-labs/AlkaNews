@@ -199,6 +199,45 @@
         </div>
     </div>
 
+    <!-- MODAL LOGIN ADMIN MANDIRI (FALLBACK / DARURAT TANPA MY ALKA) -->
+    <div id="admin-login-modal" class="fixed inset-0 z-[245] bg-[#0B1E36]/45 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeAdminLoginModal()">
+        <div class="cute-save-card rounded-[32px] p-6 sm:p-7 w-full max-w-[370px] relative overflow-hidden border border-white shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-macos-red inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-macos-yellow inline-block"></span>
+                    <span class="w-3 h-3 rounded-full bg-macos-green inline-block"></span>
+                    <span class="ml-1 text-[10px] font-extrabold uppercase tracking-wider text-[#0878F9] bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/60">Mode Mandiri</span>
+                </div>
+                <button type="button" onclick="closeAdminLoginModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-500 flex items-center justify-center transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <div class="text-center mb-5">
+                <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-gradient-to-tr from-[#12325B] via-[#0878F9] to-[#3898FF] text-white flex items-center justify-center shadow-lg shadow-blue-500/25">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h4 class="font-black text-[18px] text-[#12325B] tracking-tight">Login Admin Mandiri</h4>
+                <p class="text-[11.5px] font-medium text-[#5A6E8C] mt-0.5">Masukkan Kata Sandi / PIN darurat untuk membuka Portal Admin CMS.</p>
+            </div>
+
+            <form onsubmit="submitStandaloneAdminLogin(event)" class="space-y-3.5 text-left">
+                <div>
+                    <label class="block text-[10px] font-extrabold text-[#12325B] uppercase tracking-wider mb-1.5 ml-1 text-center">Kata Sandi / PIN Admin</label>
+                    <input type="password" id="standalone-admin-pass" required placeholder="••••••••" class="glass-input w-full px-4 py-3 text-[14px] font-bold text-[#12325B] text-center tracking-widest outline-none">
+                </div>
+                <div id="standalone-login-error" class="hidden text-[11px] font-extrabold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2 text-center">
+                    Kata Sandi / PIN Admin tidak sesuai!
+                </div>
+                <div class="pt-1 flex items-center gap-2">
+                    <button type="button" onclick="closeAdminLoginModal()" class="w-1/3 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-extrabold text-[12px] transition-all">Batal</button>
+                    <button type="submit" class="w-2/3 py-2.5 rounded-2xl bg-gradient-to-r from-[#0878F9] to-[#3898FF] hover:opacity-95 text-white font-extrabold text-[12px] shadow-lg shadow-blue-500/25 transition-all">Masuk Admin →</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- CUTE CALENDAR POPOVER -->
     <div id="cute-calendar-popover" class="cute-cal-popover" onclick="event.stopPropagation()">
         <div class="flex items-center justify-between gap-1 mb-3">
@@ -323,12 +362,21 @@
         <!-- MACOS TOP HEADER BAR (3 Dots + Top Menu Tabs in Center/Left + Admin / Cloud Trigger) -->
         <header class="h-16 px-6 shrink-0 z-40 bg-white/40 border-b border-white/60 flex items-center justify-between gap-4 select-none">
             
-            <!-- Left: macOS 3 Dots & Brand Name -->
+            <!-- Left: macOS 3 Dots (Tekan Lama untuk Login Admin Mandiri) & Brand Name -->
             <div class="flex items-center gap-4 shrink-0">
-                <div class="flex items-center gap-2" title="macOS Window Controls">
-                    <span onclick="switchPublicPage('prestasi')" class="w-3.5 h-3.5 rounded-full bg-macos-red border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Hall of Fame"></span>
-                    <span onclick="switchPublicPage('agenda')" class="w-3.5 h-3.5 rounded-full bg-macos-yellow border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Kalender Agenda"></span>
-                    <span onclick="switchPublicPage('dashboard')" class="w-3.5 h-3.5 rounded-full bg-macos-green border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Beranda"></span>
+                <div id="macos-traffic-lights"
+                     onmousedown="startTrafficLightLongPress(event)"
+                     onmouseup="cancelTrafficLightLongPress()"
+                     onmouseleave="cancelTrafficLightLongPress()"
+                     ontouchstart="startTrafficLightLongPress(event)"
+                     ontouchend="cancelTrafficLightLongPress()"
+                     ontouchcancel="cancelTrafficLightLongPress()"
+                     oncontextmenu="event.preventDefault()"
+                     class="flex items-center gap-2 py-1.5 px-2 -ml-2 rounded-full transition-all duration-300 cursor-pointer"
+                     title="Klik: Navigasi Cepat | Tekan Lama (1 Detik): Login Admin Mandiri">
+                    <span onclick="handleTrafficLightClick(event, 'prestasi')" class="w-3.5 h-3.5 rounded-full bg-macos-red border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Prestasi (Tekan lama untuk Login Admin)"></span>
+                    <span onclick="handleTrafficLightClick(event, 'agenda')" class="w-3.5 h-3.5 rounded-full bg-macos-yellow border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Kalender Agenda (Tekan lama untuk Login Admin)"></span>
+                    <span onclick="handleTrafficLightClick(event, 'dashboard')" class="w-3.5 h-3.5 rounded-full bg-macos-green border border-black/10 shadow-inner cursor-pointer hover:opacity-85 transition-opacity" title="Beranda (Tekan lama untuk Login Admin)"></span>
                 </div>
                 <div onclick="switchPublicPage('dashboard')" class="cursor-pointer flex items-center gap-2">
                     <h1 class="font-black text-[18px] tracking-tight leading-none flex items-center">
@@ -370,6 +418,9 @@
                     <button type="button" onclick="openSupabaseModal()" class="px-3 py-1.5 rounded-full bg-white/70 hover:bg-white border border-white/90 text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm transition-all">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         <span class="hidden sm:inline">Supabase Cloud</span>
+                    </button>
+                    <button type="button" id="standalone-logout-btn" onclick="logoutStandaloneAdmin()" class="hidden w-7 h-7 rounded-full bg-slate-200/80 hover:bg-rose-100 text-slate-600 hover:text-rose-600 items-center justify-center transition-all" title="Kunci Kembali Mode Admin Mandiri">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
                     </button>
                 </div>
             </div>
@@ -802,9 +853,108 @@
         let selectedCalDay = null;
         let agendaFilterMode = 'month'; // 'month' | 'year'
         let isAuthorizedAdmin = false;
+        let isStandaloneAdmin = false;
+        let trafficLightHoldTimer = null;
+        let trafficLightLongPressTriggered = false;
+
+        function startTrafficLightLongPress(e) {
+            trafficLightLongPressTriggered = false;
+            const container = document.getElementById('macos-traffic-lights');
+            if (container) {
+                container.classList.add('scale-110', 'bg-white/70', 'shadow-sm');
+            }
+            clearTimeout(trafficLightHoldTimer);
+            trafficLightHoldTimer = setTimeout(() => {
+                trafficLightLongPressTriggered = true;
+                if (container) {
+                    container.classList.remove('scale-110', 'bg-white/70', 'shadow-sm');
+                }
+                if (navigator.vibrate) {
+                    try { navigator.vibrate(40); } catch (err) {}
+                }
+                openAdminLoginModal();
+            }, 950);
+        }
+
+        function cancelTrafficLightLongPress() {
+            clearTimeout(trafficLightHoldTimer);
+            const container = document.getElementById('macos-traffic-lights');
+            if (container) {
+                container.classList.remove('scale-110', 'bg-white/70', 'shadow-sm');
+            }
+        }
+
+        function handleTrafficLightClick(event, pageId) {
+            if (trafficLightLongPressTriggered) {
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                trafficLightLongPressTriggered = false;
+                return;
+            }
+            switchPublicPage(pageId);
+        }
+
+        function openAdminLoginModal() {
+            const modal = document.getElementById('admin-login-modal');
+            const errBox = document.getElementById('standalone-login-error');
+            const passInp = document.getElementById('standalone-admin-pass');
+            if (errBox) errBox.classList.add('hidden');
+            if (passInp) passInp.value = '';
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    if (passInp) passInp.focus();
+                }, 100);
+            }
+        }
+
+        function closeAdminLoginModal() {
+            const modal = document.getElementById('admin-login-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function submitStandaloneAdminLogin(event) {
+            event.preventDefault();
+            const rawPass = (document.getElementById('standalone-admin-pass').value || '').trim().toLowerCase();
+            const errBox = document.getElementById('standalone-login-error');
+
+            const validPasswords = ['admin123', 'alka123', 'alkanews', 'myalka2026', '123456', 'admin'];
+
+            if (validPasswords.includes(rawPass)) {
+                isStandaloneAdmin = true;
+                applyAdminVisibility(true);
+                const logoutBtn = document.getElementById('standalone-logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.classList.remove('hidden');
+                    logoutBtn.classList.add('flex');
+                }
+                closeAdminLoginModal();
+                openAdminConsole();
+                showToast('Login Admin Mandiri berhasil! Selamat datang di Portal Admin.');
+            } else {
+                if (errBox) errBox.classList.remove('hidden');
+            }
+        }
+
+        function logoutStandaloneAdmin() {
+            isStandaloneAdmin = false;
+            const logoutBtn = document.getElementById('standalone-logout-btn');
+            if (logoutBtn) {
+                logoutBtn.classList.add('hidden');
+                logoutBtn.classList.remove('flex');
+            }
+            checkMasterAlkaPermission();
+            showToast('Sesi Admin Mandiri telah dikunci kembali.');
+        }
 
         function applyAdminVisibility(isAdmin) {
-            isAuthorizedAdmin = Boolean(isAdmin);
+            isAuthorizedAdmin = Boolean(isAdmin || isStandaloneAdmin);
             const adminTrigger = document.getElementById('admin-trigger-container');
             if (adminTrigger) {
                 if (isAuthorizedAdmin) {
@@ -824,6 +974,10 @@
         }
 
         function checkMasterAlkaPermission() {
+            if (isStandaloneAdmin) {
+                applyAdminVisibility(true);
+                return true;
+            }
             const urlParams = new URLSearchParams(window.location.search);
             const alkaIsAdmin = urlParams.get('alka_is_admin') === '1';
             const rawRole = urlParams.get('alka_role') || urlParams.get('role') || 'tamu';
