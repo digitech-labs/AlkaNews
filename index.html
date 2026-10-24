@@ -147,9 +147,9 @@
             .top-nav-item {
                 padding: 5px 1px !important;
                 border-radius: 7px !important;
-                font-size: clamp(9px, 2.2vw, 11px) !important;
+                font-size: clamp(8.5px, 2.1vw, 10.5px) !important;
                 font-weight: 800 !important;
-                letter-spacing: -0.03em;
+                letter-spacing: -0.04em;
                 text-align: center;
                 width: 100%;
                 min-width: 0;
@@ -160,51 +160,8 @@
                 display: none !important;
             }
             main {
-                padding: 12px !important;
+                padding: 10px !important;
             }
-        }
-
-        /* Portrait forced preview simulation */
-        body.force-portrait-preview .macos-window {
-            width: 390px !important;
-            max-width: 96vw !important;
-            height: 90vh !important;
-            border-radius: 28px !important;
-            border: 3px solid rgba(255, 255, 255, 0.92) !important;
-            box-shadow: 0 30px 80px -15px rgba(18, 50, 91, 0.28) !important;
-        }
-        body.force-portrait-preview .app-top-header {
-            height: auto !important;
-            padding: 6px 10px !important;
-            flex-direction: column !important;
-            align-items: stretch !important;
-            gap: 5px !important;
-        }
-        body.force-portrait-preview #public-top-nav:not(.hidden) {
-            display: grid !important;
-            grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
-            width: 100% !important;
-            gap: 2px !important;
-            padding: 2px !important;
-            background: rgba(255, 255, 255, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.88);
-            border-radius: 10px;
-            overflow: hidden !important;
-        }
-        body.force-portrait-preview .top-nav-item {
-            padding: 5px 1px !important;
-            border-radius: 7px !important;
-            font-size: 10px !important;
-            font-weight: 800 !important;
-            letter-spacing: -0.03em;
-            text-align: center;
-            width: 100%;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        body.force-portrait-preview main {
-            padding: 12px !important;
         }
 
         .adobe-pastel-banner {
@@ -276,18 +233,6 @@
     <div class="ambient-orb orb-3"></div>
     <div class="ambient-orb orb-4"></div>
 
-    <!-- VIEWPORT PREVIEW SWITCHER BUTTONS -->
-    <div class="fixed bottom-3 right-4 z-[205] flex items-center gap-1 p-1 rounded-full bg-white/85 backdrop-blur-2xl border border-white shadow-[0_10px_25px_-4px_rgba(18,50,91,0.2)] select-none">
-        <button type="button" id="btn-preview-landscape" onclick="setViewportPreviewMode('landscape')" class="px-2.5 py-1.5 rounded-full text-[10.5px] font-extrabold bg-[#0878F9] text-white shadow-sm flex items-center gap-1.5 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></svg>
-            <span>Landscape</span>
-        </button>
-        <button type="button" id="btn-preview-portrait" onclick="setViewportPreviewMode('portrait')" class="px-2.5 py-1.5 rounded-full text-[10.5px] font-extrabold text-[#5A6E8C] hover:text-[#12325B] flex items-center gap-1.5 transition-all">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-            <span>Potret</span>
-        </button>
-    </div>
-
     <div id="toast-notif" class="fixed top-[-100px] left-1/2 transform -translate-x-1/2 z-[250] rounded-full px-4 py-2 border border-white/90 shadow-[0_14px_35px_-6px_rgba(18,50,91,0.18)] transition-all duration-500 flex items-center gap-2 w-max max-w-[90%] bg-white/95 backdrop-blur-2xl">
         <div class="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-600 shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="sparkles" class="w-3 h-3"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/></svg>
@@ -310,9 +255,9 @@
         </div>
     </div>
 
-    <!-- STANDALONE ADMIN LOGIN MODAL (FALLBACK) - HANYA 1 KOLOM PASSWORD -->
+    <!-- STANDALONE ADMIN LOGIN MODAL (HANYA 1 KOLOM PASSWORD / PIN) -->
     <div id="admin-login-modal" class="fixed inset-0 z-[245] bg-[#0B1E36]/45 backdrop-blur-md hidden items-center justify-center p-4" onclick="closeAdminLoginModal()">
-        <div class="cute-save-card rounded-[28px] p-6 w-full max-w-[340px] relative overflow-hidden border border-white shadow-2xl" onclick="event.stopPropagation()">
+        <div class="cute-save-card rounded-[28px] p-6 w-full max-w-[320px] relative overflow-hidden border border-white shadow-2xl" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-1.5">
                     <span class="w-2.5 h-2.5 rounded-full bg-macos-red inline-block"></span>
@@ -400,7 +345,7 @@
         </div>
     </div>
 
-    <!-- READER MODAL (ULTRA PREMIUM EDITORIAL STYLE - BERITA, KARYA, EDARAN, E-MAG) -->
+    <!-- READER MODAL -->
     <div id="reader-modal" class="fixed inset-0 z-[210] bg-[#0B1E36]/60 backdrop-blur-md hidden items-center justify-center p-2 sm:p-4 md:p-6" onclick="closeReaderModal()">
         <div class="glass-card bg-white/95 w-full max-w-3xl max-h-[90vh] overflow-y-auto custom-scrollbar relative shadow-[0_25px_60px_-15px_rgba(9,25,49,0.4)] border border-white rounded-[26px] overflow-hidden flex flex-col" onclick="event.stopPropagation()">
             <div id="reader-modal-body" class="w-full"></div>
@@ -467,7 +412,7 @@
         </div>
     </div>
 
-    <!-- MACOS WINDOW CONTAINER (Full Top Nav Style, Minimalist on Mobile) -->
+    <!-- MACOS WINDOW CONTAINER -->
     <div class="macos-window w-full h-full md:rounded-[24px] flex flex-col overflow-hidden relative z-10 transition-all duration-500">
 
         <!-- MACOS TOP HEADER BAR -->
@@ -610,7 +555,7 @@
                             <h2 class="font-black text-[20px] sm:text-[26px] text-[#12325B] tracking-tight leading-none mb-1">Berita Utama</h2>
                             <p class="text-[11px] sm:text-[11.5px] font-medium text-[#7486A0]">Pusat informasi terkini dengan tata letak majalah digital yang proporsional.</p>
                         </div>
-                        <div id="berita-category-tabs" class="flex flex-wrap items-center gap-1"></div>
+                        <div id="berita-category-tabs" class="flex flex-wrap items-center gap-1.5 max-w-full"></div>
                     </div>
                     <div id="berita-dynamic-sections" class="grid grid-cols-12 gap-3 sm:gap-4 items-start"></div>
                 </section>
@@ -1850,7 +1795,6 @@
                     </div>`;
             }
 
-            // Asymmetric layout: Agenda (left) & Edaran (right)
             document.getElementById('dash-agenda-list').innerHTML = agendasData.slice(0, 3).map((ag, i) => `
                 <div onclick="switchPublicPage('agenda')" class="installed-row px-2.5 sm:px-3 py-1.5 sm:py-2 flex items-center justify-between gap-2 cursor-pointer rounded-xl">
                     <div class="flex items-center gap-2 sm:gap-2.5 min-w-0">
@@ -1901,7 +1845,7 @@
         function renderBeritaPage() {
             const tabs = ['Semua Liputan', ...dynamicCategories.berita];
             document.getElementById('berita-category-tabs').innerHTML = tabs.map(c => `
-                <button type="button" onclick="currentBeritaFilter='${c}';renderBeritaPage();" class="px-2.5 sm:px-3 py-1 rounded-full text-[10.5px] sm:text-[11px] font-extrabold transition-all ${currentBeritaFilter === c ? 'bg-[#0878F9] text-white shadow-sm shadow-blue-500/25' : 'bg-white/75 hover:bg-white text-[#5A6E8C] border border-white'}">${c}</button>
+                <button type="button" onclick="currentBeritaFilter='${c}';renderBeritaPage();" class="px-2.5 py-1 rounded-full text-[10px] sm:text-[10.5px] font-extrabold transition-all shrink-0 ${currentBeritaFilter === c ? 'bg-[#0878F9] text-white shadow-sm' : 'bg-white/80 hover:bg-white text-[#5A6E8C] border border-white'}">${c}</button>
             `).join('');
 
             const filtered = currentBeritaFilter === 'Semua Liputan' ? articlesData : articlesData.filter(a => a.category === currentBeritaFilter);
@@ -2359,7 +2303,7 @@
         }
         function applyBeritaLayout() { renderBeritaPage(); showToast('Layout diterapkan!'); }
 
-        /* PREMIER EDITORIAL READERS & SHARE (TANPA PANEL BAWAH SOSMED) */
+        /* PREMIER EDITORIAL READERS & SHARE (TANPA PANEL SOSMED BAWAH) */
         function getShareAppsForDevice(articleId, title) {
             const shareUrl = `${window.location.origin}${window.location.pathname}?baca=${encodeURIComponent(articleId)}`;
             const shareText = `📰 *${title}*\nBaca selengkapnya di Portal AlkaNews:\n${shareUrl}`;
@@ -2682,21 +2626,6 @@ grant all on table public.alkanews to anon, authenticated, service_role;`;
         function updateClock() {
             const now = new Date();
             document.getElementById('live-clock').textContent = `${String(now.getHours()).padStart(2,'0')}.${String(now.getMinutes()).padStart(2,'0')}`;
-        }
-
-        function setViewportPreviewMode(mode) {
-            const body = document.body;
-            const btnLand = document.getElementById('btn-preview-landscape');
-            const btnPort = document.getElementById('btn-preview-portrait');
-            if (mode === 'portrait') {
-                body.classList.add('force-portrait-preview');
-                if (btnPort) btnPort.className = 'px-2.5 py-1.5 rounded-full text-[10.5px] font-extrabold bg-[#0878F9] text-white shadow-sm flex items-center gap-1.5 transition-all';
-                if (btnLand) btnLand.className = 'px-2.5 py-1.5 rounded-full text-[10.5px] font-extrabold text-[#5A6E8C] hover:text-[#12325B] flex items-center gap-1.5 transition-all';
-            } else {
-                body.classList.remove('force-portrait-preview');
-                if (btnLand) btnLand.className = 'px-2.5 py-1.5 rounded-full text-[10.5px] font-extrabold bg-[#0878F9] text-white shadow-sm flex items-center gap-1.5 transition-all';
-                if (btnPort) btnPort.className = 'px-2.5 py-1.5 rounded-full text-[10.5px] font-extrabold text-[#5A6E8C] hover:text-[#12325B] flex items-center gap-1.5 transition-all';
-            }
         }
 
         function renderAllViews() {
